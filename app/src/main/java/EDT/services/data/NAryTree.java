@@ -47,42 +47,29 @@ public class NAryTree {
 
         System.out.println("Inserting " + value + " with " + parent + " as parent.");
         while (!iterationQueue.isEmpty() && !isNodeInserted) {
-            TreeNode tmp = iterationQueue.poll();
-            System.out.println("Checking if " + tmp.getValue() + " is equal to " + parent);
-            if (tmp.getValue().equals(parent)) {
-                tmp.insertChild(new TreeNode(value));
+            TreeNode currentTreeNode = iterationQueue.poll();
+            System.out.println("Checking if " + currentTreeNode.getValue() + " is equal to " + parent);
+            if (currentTreeNode.getValue().equals(parent)) {
+                currentTreeNode.insertChild(new TreeNode(value));
                 isNodeInserted = true;
                 continue;
             }
 
-//            tmp.iterateChildren((node) -> {
-//                current.add(node);
-//                System.out.println("Checking if " + node.getValue() + " is equal to " + parent);
-//                if (node.value.equals(parent)) {
-//                    isNodeInserted.set(true);
-//                    node.insertChild(new TreeNode(value));
-//                }
-//            });
-
-            if (tmp.children == null) continue;
-
             // TODO: Avoid double node comparison
-            // TODO: Move this validation to node itself
-            for (ListNode<TreeNode> listNode: tmp.children) {
-                    TreeNode node = listNode.value;
-                    iterationQueue.add(node);
-                    System.out.println("Checking if " + node.getValue() + " is equal to " + parent);
-                    if (node.value.equals(parent)) {
-                        isNodeInserted = true;
-                        node.insertChild(new TreeNode(value));
-                        System.out.println("Should end here");
-                        break;
-                    }
+            TreeNode parentInsertion = currentTreeNode.find(new ILinkedHelper<TreeNode>() {
+                @Override
+                public boolean compare(TreeNode a, TreeNode b) {
+                    iterationQueue.insert(a);
+                    System.out.println("Checking if " + a.getValue() + " is equal to " + parent);
+                    return a.getValue().equals(b.getValue());
+                }
+            }, parent);
+
+            if (parentInsertion != null) {
+                parentInsertion.insertChild(new TreeNode(value));
+                isNodeInserted = true;
             }
-
         }
-
-
 
         System.out.println("Node was inserted: " + isNodeInserted);
         System.out.println("Remaining queue: " + iterationQueue.size());

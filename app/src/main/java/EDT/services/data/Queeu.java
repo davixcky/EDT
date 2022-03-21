@@ -12,7 +12,7 @@ public class Queeu<T> extends LinkedList<T> {
         ListNode<T> tmp = head;
         head = head.next;
 
-        return tmp.value;
+        return tmp.getValue();
     }
 
     public void add(T node) {

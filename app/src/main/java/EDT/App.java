@@ -4,11 +4,6 @@ import EDT.services.data.NAryTree;
 
 public class App {
     public static void main(String[] args) {
-        // Setup internal tracing and graphics acceleration
-
-//        new App().start();
-
-
         NAryTree tree = new NAryTree();
         tree.setTitle("This is the title");
         tree.insert("This is the title", "Node A");
@@ -23,6 +18,7 @@ public class App {
         tree.insert("Node C", "Lol");
         tree.insert("This is the title", "Node C");
         tree.insert("Node C", "Lol");
+        tree.insert("Node A.1", "Node D");
 
     }
 }

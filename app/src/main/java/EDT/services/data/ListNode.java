@@ -5,7 +5,6 @@ public class ListNode<T> extends Node<T>{
 
     public ListNode(T value) {
         super(value);
-        this.value = value;
         this.next = null;
     }
 

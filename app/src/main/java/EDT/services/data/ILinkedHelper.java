@@ -1,5 +1,11 @@
 package EDT.services.data;
 
 public interface ILinkedHelper<T> {
-    void handle(T node);
+    default void handle(T node) {
+        System.out.println(node);
+    }
+
+    default boolean compare(T a, T b) {
+        return a.equals(b);
+    }
 }

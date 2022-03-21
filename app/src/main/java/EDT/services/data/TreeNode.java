@@ -17,24 +17,16 @@ public class TreeNode extends Node<String> {
         children.insert(childNode);
     }
 
-    public TreeNode getChild(String value) {
+    public TreeNode find(ILinkedHelper<TreeNode> func, String searchValue) {
         if (children == null) return null;
 
-        children.find(System.out::println);
-
-        return null;
-    }
-
-    public void iterateChildren(ILinkedHelper<TreeNode> func) {
-        if (children == null) return;
-
-        children.find(func);
+        return children.find(func, new TreeNode(searchValue));
     }
 
     @Override
     public String toString() {
         return "TreeNode{" +
-                "value=" + value +
+                "value=" + getValue() +
                 ", children=" + children +
                 '}';
     }

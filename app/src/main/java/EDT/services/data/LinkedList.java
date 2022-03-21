@@ -55,8 +55,19 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
 
     public void find(ILinkedHelper<T> helper) {
         for (ListNode<T> node : this) {
-            helper.handle(node.value);
+            helper.handle(node.getValue());
         }
+    }
+
+    public T find(ILinkedHelper<T> comparator, T searchValue) {
+        for (ListNode<T> node: this) {
+            T nodeValue = node.getValue();
+            if (comparator.compare(nodeValue, searchValue)) {
+                return nodeValue;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -66,7 +77,7 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
             listNodes.append(node).append(node.next != null ? "->" : "|");
         }
 
-        this.forEach(listNode -> System.out.println(listNode.value + "foreach") );
+        this.forEach(listNode -> System.out.println(listNode.getValue() + "foreach") );
 
         return "LinkedList{" +
                 "head=" + head +

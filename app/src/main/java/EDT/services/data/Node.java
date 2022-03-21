@@ -1,7 +1,7 @@
 package EDT.services.data;
 
 public abstract class Node<T> {
-    T value;
+    private T value;
 
     public Node(T value) {
         this.value = value;
