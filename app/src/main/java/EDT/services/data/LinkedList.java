@@ -77,8 +77,6 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
             listNodes.append(node).append(node.next != null ? "->" : "|");
         }
 
-        this.forEach(listNode -> System.out.println(listNode.getValue() + "foreach") );
-
         return "LinkedList{" +
                 "head=" + head +
                 "nodes=" + listNodes +
