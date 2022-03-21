@@ -3,8 +3,8 @@ package EDT.services.data;
 import java.util.Iterator;
 
 public class LinkedList<T> implements Iterable<ListNode<T>> {
-    ListNode<T> head, tail;
-    int length;
+    protected ListNode<T> head, tail;
+    protected int length;
 
     public LinkedList() {
         head = tail = null;

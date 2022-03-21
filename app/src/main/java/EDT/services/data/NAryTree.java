@@ -3,9 +3,8 @@ package EDT.services.data;
 import EDT.exceptions.IllegalTreeNode;
 
 public class NAryTree {
-    public TreeNode root;
-
-    private Queeu<TreeNode> iterationQueue;
+    private TreeNode root;
+    private final Queeu<TreeNode> iterationQueue;
 
     public NAryTree() {
         root = null;

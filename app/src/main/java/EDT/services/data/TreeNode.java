@@ -1,7 +1,7 @@
 package EDT.services.data;
 
 public class TreeNode extends Node<String> {
-    public LinkedList<TreeNode> children;
+    private LinkedList<TreeNode> children;
 
     public TreeNode(String value) {
         super(value);
