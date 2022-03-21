@@ -53,12 +53,6 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
         };
     }
 
-    public void find(ILinkedHelper<T> helper) {
-        for (ListNode<T> node : this) {
-            helper.handle(node.getValue());
-        }
-    }
-
     public T find(ILinkedHelper<T> comparator, T searchValue) {
         for (ListNode<T> node: this) {
             T nodeValue = node.getValue();

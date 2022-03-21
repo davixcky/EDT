@@ -4,11 +4,11 @@ import EDT.exceptions.IllegalTreeNode;
 
 public class NAryTree {
     private TreeNode root;
-    private final Queeu<TreeNode> iterationQueue;
+    private final Queue<TreeNode> iterationQueue;
 
     public NAryTree() {
         root = null;
-        iterationQueue = new Queeu<>();
+        iterationQueue = new Queue<>();
     }
 
     public void setTitle(String title) {
@@ -20,7 +20,7 @@ public class NAryTree {
         root.setValue(title);
     }
 
-    public String getTitle(String title) {
+    public String getTitle() {
         if (root == null) return "Title not defined";
 
         return root.getValue();

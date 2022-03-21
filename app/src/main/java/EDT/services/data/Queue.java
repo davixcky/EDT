@@ -1,7 +1,7 @@
 package EDT.services.data;
 
-public class Queeu<T> extends LinkedList<T> {
-    public Queeu() {
+public class Queue<T> extends LinkedList<T> {
+    public Queue() {
         super();
     }
 
