@@ -40,26 +40,22 @@ public class NAryTree {
     }
 
     public void internal_insert(String parent, String value) {
+        if (root.getValue().equals(parent)) {
+            root.insertChild(new TreeNode(value));
+            return;
+        }
+
         boolean isNodeInserted = false;
         iterationQueue.reset();
         iterationQueue.add(root);
 
-        System.out.println("Inserting " + value + " with " + parent + " as parent.");
         while (!iterationQueue.isEmpty() && !isNodeInserted) {
             TreeNode currentTreeNode = iterationQueue.poll();
-            System.out.println("Checking if " + currentTreeNode.getValue() + " is equal to " + parent);
-            if (currentTreeNode.getValue().equals(parent)) {
-                currentTreeNode.insertChild(new TreeNode(value));
-                isNodeInserted = true;
-                continue;
-            }
 
-            // TODO: Avoid double node comparison
             TreeNode parentInsertion = currentTreeNode.find(new ILinkedHelper<TreeNode>() {
                 @Override
                 public boolean compare(TreeNode a, TreeNode b) {
                     iterationQueue.insert(a);
-                    System.out.println("Checking if " + a.getValue() + " is equal to " + parent);
                     return a.getValue().equals(b.getValue());
                 }
             }, parent);
