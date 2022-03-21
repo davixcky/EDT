@@ -21,13 +21,18 @@ public class NAryTree {
     }
 
     public String getTitle() {
-        if (root == null) return "Title not defined";
+        if (root == null) return null;
 
         return root.getValue();
     }
 
     public void insert(String parent, String value) {
-        // TODO: Check if parent root is null
+        // If the tree is empty, it will set the value as the root element
+        if (parent == null && root == null) {
+            setTitle(value);
+            return;
+        }
+
         if (parent == null) {
             throw new NullPointerException();
         }
