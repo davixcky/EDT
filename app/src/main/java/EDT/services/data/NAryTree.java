@@ -5,8 +5,11 @@ import EDT.exceptions.IllegalTreeNode;
 public class NAryTree {
     public TreeNode root;
 
+    private Queeu<TreeNode> iterationQueue;
+
     public NAryTree() {
         root = null;
+        iterationQueue = new Queeu<>();
     }
 
     public void setTitle(String title) {
@@ -39,12 +42,12 @@ public class NAryTree {
 
     public void internal_insert(String parent, String value) {
         boolean isNodeInserted = false;
-        Queeu<TreeNode> current = new Queeu<>();
-        current.add(root);
+        iterationQueue.reset();
+        iterationQueue.add(root);
 
         System.out.println("Inserting " + value + " with " + parent + " as parent.");
-        while (!current.isEmpty() && !isNodeInserted) {
-            TreeNode tmp = current.poll();
+        while (!iterationQueue.isEmpty() && !isNodeInserted) {
+            TreeNode tmp = iterationQueue.poll();
             System.out.println("Checking if " + tmp.getValue() + " is equal to " + parent);
             if (tmp.getValue().equals(parent)) {
                 tmp.insertChild(new TreeNode(value));
@@ -67,7 +70,7 @@ public class NAryTree {
             // TODO: Move this validation to node itself
             for (ListNode<TreeNode> listNode: tmp.children) {
                     TreeNode node = listNode.value;
-                    current.add(node);
+                    iterationQueue.add(node);
                     System.out.println("Checking if " + node.getValue() + " is equal to " + parent);
                     if (node.value.equals(parent)) {
                         isNodeInserted = true;
@@ -82,7 +85,7 @@ public class NAryTree {
 
 
         System.out.println("Node was inserted: " + isNodeInserted);
-        System.out.println("Remaining queue: " + current.size());
+        System.out.println("Remaining queue: " + iterationQueue.size());
         System.out.println();
     }
 }
