@@ -31,7 +31,7 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     @Override
     public Iterator<ListNode<T>> iterator() {
 
-        return new Iterator<>() {
+        return new Iterator<ListNode<T>>() {
             private ListNode<T> currentNode = head;
 
             @Override
