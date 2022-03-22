@@ -124,6 +124,23 @@ public class NAryTree {
         return data.toString();
     }
 
+    public void forEachNode(ILinkedHelper<TreeNode> func) {
+        if (root == null) return;
+
+        iterationQueue.reset();
+        iterationQueue.add(root);
+        while (!iterationQueue.isEmpty()) {
+            TreeNode currentTreeNode = iterationQueue.poll();
+            currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
+                @Override
+                public void handle(TreeNode node) {
+                    iterationQueue.add(node);
+                    func.handle(node);
+                }
+            });
+        }
+    }
+
     public enum NodeType {
         PACKAGE_NODE,
         DELIVERABLE_NODE,

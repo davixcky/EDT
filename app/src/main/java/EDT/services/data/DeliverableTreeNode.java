@@ -20,6 +20,7 @@ public class DeliverableTreeNode extends TreeNode {
     @Override
     public String toString(int index) {
         return "DeliverableTreeNode{" +
+                "title='" + getValue() + ".txt" + "', " +
                 "fileContent='" + fileContent + '\'' +
                 '}';
     }
