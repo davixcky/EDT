@@ -13,12 +13,11 @@ public class App {
 
         tree.insert("Node B", "Test");
 
-//        System.out.println(tree.root);
-
         tree.insert("Node C", "Lol");
         tree.insert("This is the title", "Node C");
         tree.insert("Node C", "Lol");
         tree.insert("Node A.1", "Node D");
 
+        System.out.println(tree);
     }
 }

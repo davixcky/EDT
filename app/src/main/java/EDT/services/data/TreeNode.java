@@ -23,6 +23,12 @@ public class TreeNode extends Node<String> {
         return children.find(func, new TreeNode(searchValue));
     }
 
+    public void forEachChild(ILinkedHelper<TreeNode> func) {
+        if (children == null) return;
+
+        children.forEach(treeNodeListNode -> func.handle(treeNodeListNode.getValue()));
+    }
+
     @Override
     public String toString() {
         return "TreeNode{" +

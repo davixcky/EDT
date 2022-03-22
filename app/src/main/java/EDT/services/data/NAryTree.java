@@ -75,4 +75,34 @@ public class NAryTree {
         System.out.println("Remaining queue: " + iterationQueue.size());
         System.out.println();
     }
+
+    @Override
+    public String toString() {
+        if (root == null) return "Empty";
+
+        iterationQueue.reset();
+        iterationQueue.add(root);
+
+        StringBuilder data = new StringBuilder();
+        final int[] idx = new int[1];
+        while (!iterationQueue.isEmpty()) {
+            TreeNode currentTreeNode = iterationQueue.poll();
+
+            data.append("Parent: [").append(currentTreeNode.getValue()).append("]\n");
+            idx[0] = 1;
+            currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
+                @Override
+                public void handle(TreeNode node) {
+                    iterationQueue.add(node);
+                    data.append("\t").append(idx[0]).append(". ");
+                    data.append(node.getValue()).append("\n");
+                    idx[0] += 1;
+                }
+            });
+
+            data.append("\n");
+        }
+
+        return data.toString();
+    }
 }
