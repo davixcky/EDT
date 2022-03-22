@@ -29,11 +29,14 @@ public class TreeNode extends Node<String> {
         children.forEach(treeNodeListNode -> func.handle(treeNodeListNode.getValue()));
     }
 
-    @Override
-    public String toString() {
-        return "TreeNode{" +
-                "value=" + getValue() +
-                ", children=" + children +
-                '}';
+    public String toString(int idx) {
+        if (children == null) return getValue();
+
+        StringBuilder data = new StringBuilder();
+        children.forEach(treeNodeListNode -> {
+            data.append("\t".repeat(idx)).append(treeNodeListNode.getValue().toString(idx + 1)).append("\n");
+        });
+
+        return getValue() + "\n" + data;
     }
 }

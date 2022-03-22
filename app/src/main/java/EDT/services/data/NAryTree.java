@@ -95,7 +95,7 @@ public class NAryTree {
                 public void handle(TreeNode node) {
                     iterationQueue.add(node);
                     data.append("\t").append(idx[0]).append(". ");
-                    data.append(node.getValue()).append("\n");
+                    data.append(node.toString(0)).append("\n");
                     idx[0] += 1;
                 }
             });
