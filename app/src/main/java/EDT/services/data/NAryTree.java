@@ -13,7 +13,7 @@ public class NAryTree {
 
     public void setTitle(String title) {
         if (root == null) {
-            root = new TreeNode(title);
+            root = new PackageTreeNode(title);
             return;
         }
 
@@ -26,14 +26,19 @@ public class NAryTree {
         return root.getValue();
     }
 
-    public void insert(String parent, String value) {
+    public void insert(String parentValue, String value, NodeType type) {
+        TreeNode newNode = getNodeInstance(type, value);
+        insert(parentValue, value, newNode);
+    }
+
+    private void insert(String parentValue, String value, TreeNode node) {
         // If the tree is empty, it will set the value as the root element
-        if (parent == null && root == null) {
+        if (parentValue == null && root == null) {
             setTitle(value);
             return;
         }
 
-        if (parent == null) {
+        if (parentValue == null) {
             throw new NullPointerException();
         }
 
@@ -41,12 +46,24 @@ public class NAryTree {
             throw new IllegalTreeNode();
         }
 
-        internal_insert(parent, value);
+        internal_insert(parentValue, node);
     }
 
-    public void internal_insert(String parent, String value) {
-        if (root.getValue().equals(parent)) {
-            root.insertChild(new TreeNode(value));
+    public void insertPackageNode(String parentValue, String value) {
+        insert(parentValue, value, new PackageTreeNode(value));
+    }
+
+    public void insertDerivableNode(String parentValue, String value, String fileContent) {
+        insert(parentValue, value, new DeliverableTreeNode(value, fileContent));
+    }
+
+    private TreeNode getNodeInstance(NodeType type, String nodeValue) {
+        return type == NodeType.DELIVERABLE_NODE ? new DeliverableTreeNode(nodeValue) : new PackageTreeNode(nodeValue);
+    }
+
+    private void internal_insert(String parentValue, TreeNode newNode) {
+        if (root.getValue().equals(parentValue)) {
+            root.insertChild(newNode);
             return;
         }
 
@@ -54,6 +71,7 @@ public class NAryTree {
         iterationQueue.reset();
         iterationQueue.add(root);
 
+        PackageTreeNode parentNodeCache = new PackageTreeNode(parentValue);
         while (!iterationQueue.isEmpty() && !isNodeInserted) {
             TreeNode currentTreeNode = iterationQueue.poll();
 
@@ -63,10 +81,10 @@ public class NAryTree {
                     iterationQueue.insert(a);
                     return a.getValue().equals(b.getValue());
                 }
-            }, parent);
+            }, parentNodeCache);
 
             if (parentInsertion != null) {
-                parentInsertion.insertChild(new TreeNode(value));
+                parentInsertion.insertChild(newNode);
                 isNodeInserted = true;
             }
         }
@@ -104,5 +122,10 @@ public class NAryTree {
         }
 
         return data.toString();
+    }
+
+    public enum NodeType {
+        PACKAGE_NODE,
+        DELIVERABLE_NODE,
     }
 }

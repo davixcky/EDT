@@ -1,6 +1,6 @@
 package EDT.services.data;
 
-public class TreeNode extends Node<String> {
+public abstract class TreeNode extends Node<String> {
     private LinkedList<TreeNode> children;
 
     public TreeNode(String value) {
@@ -17,10 +17,10 @@ public class TreeNode extends Node<String> {
         children.insert(childNode);
     }
 
-    public TreeNode find(ILinkedHelper<TreeNode> func, String searchValue) {
+    public TreeNode find(ILinkedHelper<TreeNode> func, TreeNode searchValue) {
         if (children == null) return null;
 
-        return children.find(func, new TreeNode(searchValue));
+        return children.find(func, searchValue);
     }
 
     public void forEachChild(ILinkedHelper<TreeNode> func) {
