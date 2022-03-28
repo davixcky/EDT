@@ -3,12 +3,25 @@ package EDT.services.data;
 import EDT.exceptions.IllegalTreeNode;
 
 public class NAryTree {
-    private TreeNode root;
     private final Queue<TreeNode> iterationQueue;
+    private TreeNode root;
+    private final LinkedList<LinkedList<String>> mapNames;
+
 
     public NAryTree() {
         root = null;
         iterationQueue = new Queue<>();
+        mapNames = new LinkedList<>();
+    }
+
+    private static boolean isNotPackageInstance(TreeNode node) {
+        return !(node instanceof PackageTreeNode);
+    }
+
+    public String getTitle() {
+        if (root == null) return null;
+
+        return root.getValue();
     }
 
     public void setTitle(String title) {
@@ -20,14 +33,10 @@ public class NAryTree {
         root.setValue(title);
     }
 
-    public String getTitle() {
-        if (root == null) return null;
-
-        return root.getValue();
-    }
-
     public void insert(String parentValue, String value, NodeType type) {
         TreeNode newNode = getNodeInstance(type, value);
+        newNode.parentValue = parentValue;
+
         insert(parentValue, value, newNode);
     }
 
@@ -71,6 +80,16 @@ public class NAryTree {
         iterationQueue.reset();
         iterationQueue.add(root);
 
+        final int[] lastIndex = new int[1];
+        if (isNotPackageInstance(newNode)) {
+            mapNames.reset();
+            for (int i = 0; i < root.size(); i++) {
+                LinkedList<String> names = new LinkedList<>();
+                names.insert(root.getValue());
+                mapNames.insert(names);
+            }
+        }
+
         PackageTreeNode parentNodeCache = new PackageTreeNode(parentValue);
         while (!iterationQueue.isEmpty() && !isNodeInserted) {
             TreeNode currentTreeNode = iterationQueue.poll();
@@ -79,6 +98,18 @@ public class NAryTree {
                 @Override
                 public boolean compare(TreeNode a, TreeNode b) {
                     iterationQueue.insert(a);
+
+                    if (isNotPackageInstance(newNode)) {
+                        for (int i = 0; i < mapNames.size(); i++) {
+                            LinkedList<String> currentMap = mapNames.getAt(i).getValue();
+                            if (currentMap.tail.getValue().equals(a.parentValue)) {
+                                currentMap.insert(a.getValue());
+                                lastIndex[0] = i;
+                                break;
+                            }
+                        }
+                    }
+
                     return a.getValue().equals(b.getValue());
                 }
             }, parentNodeCache);
@@ -89,37 +120,62 @@ public class NAryTree {
             }
         }
 
-        System.out.println("Node was inserted: " + isNodeInserted);
-        System.out.println("Remaining queue: " + iterationQueue.size());
+        System.out.println("Node value: " + newNode.getValue());
+        System.out.println("Node parent: " + parentValue);
+
+        if (isNodeInserted && isNotPackageInstance(newNode)) {
+//            LinkedList<String> nodePath = mapNames.getAt(lastIndex[0]).getValue();
+//            StringBuilder literalPath = new StringBuilder();
+//
+//            for (ListNode<String> node : nodePath) {
+//                literalPath.append(node.getValue().replace(' ', '_')).append("/");
+//            }
+//
+//            literalPath.append(newNode.getValue().replace(' ', '_'));
+//            ((DeliverableTreeNode)newNode).setFullPath(literalPath.toString());
+//            System.out.println(literalPath);
+            ((DeliverableTreeNode) newNode).setFullPath(generateFullPath(lastIndex[0], newNode.getValue()));
+            System.out.println(((DeliverableTreeNode) newNode).getFullPath());
+        }
+
+        System.out.println(this);
         System.out.println();
+
+    }
+
+    private String generateFullPath(int mapIndex, String newNodeValue) {
+        LinkedList<String> mapPath = mapNames.getAt2(mapIndex);
+        StringBuilder literalPath = new StringBuilder();
+
+        for (ListNode<String> node : mapPath) {
+            literalPath.append(node.getValue()).append("/");
+        }
+
+        literalPath.append(newNodeValue);
+        return literalPath.toString().replace(' ', '_');
     }
 
     @Override
     public String toString() {
         if (root == null) return "Empty";
 
-        iterationQueue.reset();
-        iterationQueue.add(root);
-
         StringBuilder data = new StringBuilder();
         final int[] idx = new int[1];
-        while (!iterationQueue.isEmpty()) {
-            TreeNode currentTreeNode = iterationQueue.poll();
 
-            data.append("Parent: [").append(currentTreeNode.getValue()).append("]\n");
-            idx[0] = 1;
-            currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
-                @Override
-                public void handle(TreeNode node) {
-                    iterationQueue.add(node);
-                    data.append("\t").append(idx[0]).append(". ");
-                    data.append(node.toString(2)).append("\n");
-                    idx[0] += 1;
-                }
-            });
+        TreeNode currentTreeNode = root;
 
-            data.append("\n");
-        }
+        data.append("Parent: [").append(currentTreeNode.getValue()).append("]\n");
+        idx[0] = 1;
+        currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                data.append("\t").append(idx[0]).append(". ");
+                data.append(node.toString(2)).append("\n");
+                idx[0] += 1;
+            }
+        });
+
+        data.append("\n");
 
         return data.toString();
     }
