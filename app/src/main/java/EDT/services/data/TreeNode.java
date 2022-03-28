@@ -3,6 +3,7 @@ package EDT.services.data;
 public abstract class TreeNode extends Node<String> {
     private LinkedList<TreeNode> children;
 
+    protected String parentValue;
     public TreeNode(String value) {
         super(value);
 
@@ -38,5 +39,23 @@ public abstract class TreeNode extends Node<String> {
         });
 
         return getValue() + "\n" + data;
+    }
+
+    public String getParentValue() {
+        return parentValue;
+    }
+
+    public int size() {
+        if (children == null) return 0;
+
+         return children.size();
+    }
+
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "children=" + children +
+                ", parentValue='" + parentValue + '\'' +
+                '}';
     }
 }
