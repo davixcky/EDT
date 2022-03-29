@@ -33,18 +33,19 @@ public class NAryTree {
         root.setValue(title);
     }
 
-    public void insert(String parentValue, String value, NodeType type) {
+    public boolean insert(String parentValue, String value, NodeType type) {
         TreeNode newNode = getNodeInstance(type, value);
         newNode.parentValue = parentValue;
 
-        insert(parentValue, value, newNode);
+        return insert(parentValue, value, newNode);
     }
 
-    private void insert(String parentValue, String value, TreeNode node) {
+    private boolean insert(String parentValue, String value, TreeNode node) {
         // If the tree is empty, it will set the value as the root element
+        // TODO: It should create a root node with "no title" and add the node
         if (parentValue == null && root == null) {
             setTitle(value);
-            return;
+            return true;
         }
 
         if (parentValue == null) {
@@ -55,25 +56,25 @@ public class NAryTree {
             throw new IllegalTreeNode();
         }
 
-        internal_insert(parentValue, node);
+        return internal_insert(parentValue, node);
     }
 
-    public void insertPackageNode(String parentValue, String value) {
-        insert(parentValue, value, new PackageTreeNode(value));
+    public boolean insertPackageNode(String parentValue, String value) {
+        return insert(parentValue, value, new PackageTreeNode(value));
     }
 
-    public void insertDerivableNode(String parentValue, String value, String fileContent) {
-        insert(parentValue, value, new DeliverableTreeNode(value, fileContent));
+    public boolean insertDerivableNode(String parentValue, String value, String fileContent) {
+        return insert(parentValue, value, new DeliverableTreeNode(value, fileContent));
     }
 
     private TreeNode getNodeInstance(NodeType type, String nodeValue) {
         return type == NodeType.DELIVERABLE_NODE ? new DeliverableTreeNode(nodeValue) : new PackageTreeNode(nodeValue);
     }
 
-    private void internal_insert(String parentValue, TreeNode newNode) {
+    private boolean internal_insert(String parentValue, TreeNode newNode) {
         if (root.getValue().equals(parentValue)) {
             root.insertChild(newNode);
-            return;
+            return true;
         }
 
         boolean isNodeInserted = false;
@@ -120,10 +121,14 @@ public class NAryTree {
             }
         }
 
+        if (!isNodeInserted) {
+            return false;
+        }
+
         System.out.println("Node value: " + newNode.getValue());
         System.out.println("Node parent: " + parentValue);
 
-        if (isNodeInserted && isNotPackageInstance(newNode)) {
+        if (isNotPackageInstance(newNode)) {
 //            LinkedList<String> nodePath = mapNames.getAt(lastIndex[0]).getValue();
 //            StringBuilder literalPath = new StringBuilder();
 //
@@ -141,6 +146,7 @@ public class NAryTree {
         System.out.println(this);
         System.out.println();
 
+        return true;
     }
 
     private String generateFullPath(int mapIndex, String newNodeValue) {
