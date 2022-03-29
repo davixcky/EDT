@@ -9,6 +9,8 @@ public class NAryTree {
 
 
     public NAryTree() {
+        // TODO: Fix parentValue for deliverableTreeNodes insertion
+
         root = null;
         iterationQueue = new Queue<>();
         mapNames = new LinkedList<>();
@@ -35,12 +37,12 @@ public class NAryTree {
 
     public boolean insert(String parentValue, String value, NodeType type) {
         TreeNode newNode = getNodeInstance(type, value);
-        newNode.parentValue = parentValue;
-
         return insert(parentValue, value, newNode);
     }
 
     private boolean insert(String parentValue, String value, TreeNode node) {
+        node.parentValue = parentValue;
+
         // If the tree is empty, it will set the value as the root element
         // TODO: It should create a root node with "no title" and add the node
         if (parentValue == null && root == null) {
@@ -60,7 +62,7 @@ public class NAryTree {
     }
 
     public boolean insertPackageNode(String parentValue, String value) {
-        return insert(parentValue, value, new PackageTreeNode(value));
+        return insert(parentValue, value, NodeType.PACKAGE_NODE);
     }
 
     public boolean insertDerivableNode(String parentValue, String value, String fileContent) {
@@ -116,8 +118,7 @@ public class NAryTree {
             }, parentNodeCache);
 
             if (parentInsertion != null) {
-                parentInsertion.insertChild(newNode);
-                isNodeInserted = true;
+                isNodeInserted = parentInsertion.insertChild(newNode);
             }
         }
 
@@ -125,26 +126,9 @@ public class NAryTree {
             return false;
         }
 
-        System.out.println("Node value: " + newNode.getValue());
-        System.out.println("Node parent: " + parentValue);
-
         if (isNotPackageInstance(newNode)) {
-//            LinkedList<String> nodePath = mapNames.getAt(lastIndex[0]).getValue();
-//            StringBuilder literalPath = new StringBuilder();
-//
-//            for (ListNode<String> node : nodePath) {
-//                literalPath.append(node.getValue().replace(' ', '_')).append("/");
-//            }
-//
-//            literalPath.append(newNode.getValue().replace(' ', '_'));
-//            ((DeliverableTreeNode)newNode).setFullPath(literalPath.toString());
-//            System.out.println(literalPath);
             ((DeliverableTreeNode) newNode).setFullPath(generateFullPath(lastIndex[0], newNode.getValue()));
-            System.out.println(((DeliverableTreeNode) newNode).getFullPath());
         }
-
-        System.out.println(this);
-        System.out.println();
 
         return true;
     }

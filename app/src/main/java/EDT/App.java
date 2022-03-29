@@ -27,6 +27,15 @@ public class App {
 
         tree.insertDerivableNode("Node A", "Final node", "This is the content of the file");
         tree.insertDerivableNode("Node A", "this is a try", "this is another file");
+
+
         System.out.println(tree);
+        System.out.println("value " + tree.insert("Node A", "Node A.32", NAryTree.NodeType.PACKAGE_NODE));
+        System.out.println("value " + tree.insert("Node A", "Node A.32", NAryTree.NodeType.PACKAGE_NODE));
+        System.out.println("value " + tree.insertPackageNode("Node A", "Node A.321"));
+        System.out.println("value " + tree.insertDerivableNode("Node A", "Node A.321", "content"));
+        System.out.println("value " + tree.insertPackageNode("Node A", "Node A.321"));
+        System.out.println(tree);
+
     }
 }

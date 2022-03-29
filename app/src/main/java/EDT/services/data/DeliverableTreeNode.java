@@ -31,7 +31,7 @@ public class DeliverableTreeNode extends TreeNode {
     }
 
     @Override
-    public void insertChild(TreeNode childNode) {
+    public boolean insertChild(TreeNode childNode) {
         throw new UnsupportedOperationException("you cannot insert a child in a final node");
     }
 
