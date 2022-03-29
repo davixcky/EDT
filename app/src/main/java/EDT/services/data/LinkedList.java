@@ -11,6 +11,18 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
         length = 0;
     }
 
+    public LinkedList<T> filter(ILinkedIFilter<T> filter) {
+        LinkedList<T> filtered = new LinkedList<>();
+
+        for (ListNode<T> el: this) {
+            if (filter.isValid(el.getValue())) {
+                filtered.insert(el.getValue());
+            }
+        }
+
+        return filtered;
+    }
+
     public void insert(T value) {
         ListNode<T> newNode = new ListNode<>(value);
         length++;
