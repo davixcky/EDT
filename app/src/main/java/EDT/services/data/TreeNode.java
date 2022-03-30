@@ -1,7 +1,5 @@
 package EDT.services.data;
 
-import org.jetbrains.annotations.Contract;
-
 public abstract class TreeNode extends Node<String> {
     private LinkedList<TreeNode> children;
 
@@ -57,7 +55,6 @@ public abstract class TreeNode extends Node<String> {
          return children.size();
     }
 
-    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof TreeNode node)) return false;

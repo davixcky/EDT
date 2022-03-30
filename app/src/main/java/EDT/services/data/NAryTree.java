@@ -9,8 +9,6 @@ public class NAryTree {
 
 
     public NAryTree() {
-        // TODO: Fix parentValue for deliverableTreeNodes insertion
-
         root = null;
         iterationQueue = new Queue<>();
         mapNames = new LinkedList<>();
