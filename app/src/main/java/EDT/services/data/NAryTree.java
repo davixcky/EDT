@@ -2,6 +2,10 @@ package EDT.services.data;
 
 import EDT.exceptions.IllegalTreeNode;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class NAryTree {
     private final Queue<TreeNode> iterationQueue;
     private TreeNode root;
@@ -317,8 +321,18 @@ public class NAryTree {
         return maxDepth + 1;
     }
 
-    public void toFile() {
-        System.out.println(internal_toString());
+    public void toFile(File file) throws IOException {
+        if (file == null) throw new RuntimeException("file must be defined");
+
+        String data = internal_toString();
+        if (data == null) {
+            data = "";
+        }
+
+        FileWriter fileWriter = new FileWriter(file);
+        System.out.println(data);
+        fileWriter.write(data);
+        fileWriter.close();
     }
 
     private String internal_toString() {
