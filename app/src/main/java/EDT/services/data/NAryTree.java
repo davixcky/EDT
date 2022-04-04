@@ -7,14 +7,17 @@ public class NAryTree {
     private TreeNode root;
     private final LinkedList<LinkedList<String>> mapNames;
 
+    private int totalPackagesNode, totalDeliverableNode;
 
     public NAryTree() {
         root = null;
         iterationQueue = new Queue<>();
         mapNames = new LinkedList<>();
+
+        totalPackagesNode = totalDeliverableNode = 0;
     }
 
-    private static boolean isNotPackageInstance(TreeNode node) {
+    public static boolean isNotPackageInstance(TreeNode node) {
         return !(node instanceof PackageTreeNode);
     }
 
@@ -56,7 +59,18 @@ public class NAryTree {
             throw new IllegalTreeNode();
         }
 
-        return internal_insert(parentValue, node);
+        boolean isNodeInserted = internal_insert(parentValue, node);
+        if (!isNodeInserted) {
+            return false;
+        }
+
+        if (isNotPackageInstance(node)) {
+            totalDeliverableNode += 1;
+        } else {
+            totalPackagesNode += 1;
+        }
+
+        return true;
     }
 
     public boolean insertPackageNode(String parentValue, String value) {
@@ -145,27 +159,10 @@ public class NAryTree {
 
     @Override
     public String toString() {
-        if (root == null) return "Empty";
+        String data = internal_toString();
+        if (data == null) return "Empty";
 
-        StringBuilder data = new StringBuilder();
-        final int[] idx = new int[1];
-
-        TreeNode currentTreeNode = root;
-
-        data.append("Parent: [").append(currentTreeNode.getValue()).append("]\n");
-        idx[0] = 1;
-        currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
-            @Override
-            public void handle(TreeNode node) {
-                data.append("\t").append(idx[0]).append(". ");
-                data.append(node.toString(2)).append("\n");
-                idx[0] += 1;
-            }
-        });
-
-        data.append("\n");
-
-        return data.toString();
+        return data;
     }
 
     public void forEachNode(ILinkedHelper<TreeNode> func) {
@@ -289,6 +286,60 @@ public class NAryTree {
         });
 
         func.handle(root);
+    }
+
+    public int getTotalPackagesNode() {
+        return totalPackagesNode;
+    }
+
+    public int getTotalDeliverableNode() {
+        return totalDeliverableNode;
+    }
+
+    public int getSize() {
+        return totalDeliverableNode + totalPackagesNode;
+    }
+
+    public int depth() {
+        if (root == null) return 0;
+
+        return internal_depth(root, 1);
+    }
+
+    private int internal_depth(TreeNode root, int depth) {
+        if (root == null) return depth;
+
+        int maxDepth = 0;
+        for (int i = 0; i < root.size(); i++) {
+            maxDepth = Math.max(maxDepth, internal_depth(root.getChildAt(i), depth));
+        }
+
+        return maxDepth + 1;
+    }
+
+    public void toFile() {
+        System.out.println(internal_toString());
+    }
+
+    private String internal_toString() {
+        if (root == null) return null;
+
+        StringBuilder data = new StringBuilder();
+
+        TreeNode currentTreeNode = root;
+
+        data.append(currentTreeNode.getValue()).append("\n");
+        currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                data.append("\t");
+                data.append(node.toString(2)).append("\n");
+            }
+        });
+
+        data.append("\n");
+
+        return data.toString();
     }
 
     public enum NodeType {
