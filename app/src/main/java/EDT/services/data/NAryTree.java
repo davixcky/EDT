@@ -91,8 +91,7 @@ public class NAryTree {
 
     private boolean internal_insert(String parentValue, TreeNode newNode) {
         if (root.getValue().equals(parentValue)) {
-            root.insertChild(newNode);
-            return true;
+            return root.insertChild(newNode);
         }
 
         boolean isNodeInserted = false;
