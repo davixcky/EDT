@@ -185,6 +185,37 @@ public class NAryTree {
         }
     }
 
+    public LinkedList<TreeNode> filter(ILinkedIFilter<TreeNode> func) {
+        LinkedList<TreeNode> elements = new LinkedList<>();
+
+        forEachNode(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                if (func.isValid(node)) {
+                    elements.insert(node);
+                }
+            }
+        });
+
+        return elements;
+    }
+
+    public TreeNode find(String targetValue) {
+        final TreeNode[] nodeResult = {null};
+
+        forEachNode(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                if (node.getValue().equals(targetValue) && nodeResult[0] != null) {
+                    nodeResult[0] = node;
+                }
+            }
+        });
+
+        return nodeResult[0];
+    }
+
+
     public enum NodeType {
         PACKAGE_NODE,
         DELIVERABLE_NODE,

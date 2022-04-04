@@ -1,6 +1,8 @@
 package EDT;
 
+import EDT.services.data.ILinkedIFilter;
 import EDT.services.data.NAryTree;
+import EDT.services.data.TreeNode;
 
 public class App {
     public static void main(String[] args) {
@@ -36,6 +38,15 @@ public class App {
         System.out.println("value " + tree.insertDerivableNode("Node A", "Node A.321", "content"));
         System.out.println("value " + tree.insertPackageNode("Node A", "Node A.321"));
         System.out.println(tree);
+
+        System.out.println(tree.filter(new ILinkedIFilter<TreeNode>() {
+            @Override
+            public boolean isValid(TreeNode node) {
+                return node.getValue().equals("Node C");
+            }
+        }));
+
+        System.out.println(tree.find("Node C"));
 
     }
 }
