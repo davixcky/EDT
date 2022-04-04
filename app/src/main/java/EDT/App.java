@@ -1,5 +1,6 @@
 package EDT;
 
+import EDT.services.data.ILinkedHelper;
 import EDT.services.data.ILinkedIFilter;
 import EDT.services.data.NAryTree;
 import EDT.services.data.TreeNode;
@@ -54,12 +55,27 @@ public class App {
         System.out.println(tree.find("Node A.1")); // Should return false
 
         System.out.println("\ninorder");
-        tree.inorder();
+        tree.inorder(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                System.out.println(node.getValue());
+            }
+        });
 
         System.out.println("\npreorder: ");
-        tree.preorder();
+        tree.preorder(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                System.out.println(node.getValue());
+            }
+        });
 
         System.out.println("\npostorder");
-        tree.postorder();
+        tree.postorder(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                System.out.println(node.getValue());
+            }
+        });
     }
 }

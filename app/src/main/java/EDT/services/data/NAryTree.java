@@ -241,54 +241,54 @@ public class NAryTree {
         return isNodeRemoved[0];
     }
 
-    public void inorder() {
-        internal_inorder(root);
+    public void inorder(ILinkedHelper<TreeNode> func) {
+        internal_inorder(root, func);
     }
 
-    public void preorder() {
-        internal_preorder(root);
+    public void preorder(ILinkedHelper<TreeNode> func) {
+        internal_preorder(root, func);
     }
 
-    public void postorder() {
-        internal_postorder(root);
+    public void postorder(ILinkedHelper<TreeNode> func) {
+        internal_postorder(root, func);
     }
 
-    private void internal_inorder(TreeNode root) {
+    private void internal_inorder(TreeNode root, ILinkedHelper<TreeNode> func) {
         if (root == null) return;
 
         int total = root.size();
         for (int i = 0; i < total - 1; i++) {
-            internal_inorder(root.getChildAt(i));
+            internal_inorder(root.getChildAt(i), func);
         }
 
-        System.out.println(root.getValue());
+        func.handle(root);
 
-        internal_inorder(root.getChildAt(total - 1));
+        internal_inorder(root.getChildAt(total - 1), func);
     }
 
-    private void internal_preorder(TreeNode root) {
+    private void internal_preorder(TreeNode root, ILinkedHelper<TreeNode> func) {
         if (root == null) return;
 
-        System.out.println(root.getValue());
+        func.handle(root);
         root.forEachChild(new ILinkedHelper<TreeNode>() {
             @Override
             public void handle(TreeNode node) {
-                internal_preorder(node);
+                internal_preorder(node, func);
             }
         });
     }
 
-    private void internal_postorder(TreeNode root) {
+    private void internal_postorder(TreeNode root, ILinkedHelper<TreeNode> func) {
         if (root == null) return;
 
         root.forEachChild(new ILinkedHelper<TreeNode>() {
             @Override
             public void handle(TreeNode node) {
-                internal_postorder(node);
+                internal_postorder(node, func);
             }
         });
 
-        System.out.println(root.getValue());
+        func.handle(root);
     }
 
     public enum NodeType {
