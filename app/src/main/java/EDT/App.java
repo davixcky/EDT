@@ -1,12 +1,12 @@
 package EDT;
 
-import EDT.services.data.ILinkedHelper;
-import EDT.services.data.ILinkedIFilter;
-import EDT.services.data.NAryTree;
-import EDT.services.data.TreeNode;
+import EDT.services.data.*;
+
+import java.io.File;
+import java.io.IOException;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         NAryTree tree = new NAryTree();
         tree.setTitle("This is the title");
         tree.insert("This is the title", "Node A", NAryTree.NodeType.PACKAGE_NODE);
@@ -77,5 +77,38 @@ public class App {
                 System.out.println(node.getValue());
             }
         });
+
+        System.out.println(tree.depth());
+        System.out.println(tree.getTotalDeliverableNode());
+        System.out.println(tree.getTotalPackagesNode());
+
+
+        // Calculates nodes with a single deliverable node
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+        final int[] counter = {0};
+        tree.forEachNode(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                counter[0] = 0;
+                node.forEachChild(new ILinkedHelper<TreeNode>() {
+                    @Override
+                    public void handle(TreeNode child) {
+                        if (NAryTree.isNotPackageInstance(child)) {
+                            counter[0] += 1;
+                        }
+                    }
+                });
+
+                if (counter[0] == 1) {
+                    nodes.insert(node);
+                }
+            }
+        });
+        for (ListNode<TreeNode> node : nodes) {
+            System.out.println(node.getValue().getValue());
+        }
+        System.out.println(nodes.size());
+
+        tree.toFile(new File("my-project.txt"));
     }
 }
