@@ -1,12 +1,12 @@
 package EDT.UI.screens;
 
+import EDT.services.data.NAryTree;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.Objects;
 
@@ -23,9 +23,67 @@ public class EDT {
 
     private INodeListener listener;
 
+    private NAryTree dataTree;
+
+    private JMenuBar mainMenuBar;
+
+    /*
+    * Menu:
+    *   File:
+    *       Export
+    *   Reports:
+    *       Generate
+    *   Traversal:
+    *       Preorder
+    *       Postorder
+    *       Inorder
+    * */
+
     public EDT() {
+        dataTree = new NAryTree();
+
         initContainers();
         initComponents();
+        initMenu();
+    }
+
+    private void initMenu() {
+        mainMenuBar = new JMenuBar();
+
+        initFileSubMenu();
+        initReportsSubMenu();
+    }
+
+    private void initFileSubMenu() {
+        JMenu fileMenu = new JMenu("Files");
+
+        JMenuItem export = new JMenuItem("Export");
+        export.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        export.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: Launch fileChooser and call treeData.toFile()
+                System.out.println("Exporting file");
+            }
+        });
+
+        fileMenu.add(export);
+        mainMenuBar.add(fileMenu);
+    }
+
+    private void initReportsSubMenu() {
+        JMenu reportsMenu = new JMenu("Reports");
+
+        JMenuItem generate = new JMenuItem("Generate");
+        generate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: Call counter, depth and nodes with a single deliverable
+            }
+        });
+
+        reportsMenu.add(generate);
+        mainMenuBar.add(reportsMenu);
     }
 
     private void initContainers() {
@@ -113,5 +171,9 @@ public class EDT {
 
     public Container getMainContainer() {
         return mainContainer;
+    }
+
+    public JMenuBar getMainMenuBar() {
+        return mainMenuBar;
     }
 }

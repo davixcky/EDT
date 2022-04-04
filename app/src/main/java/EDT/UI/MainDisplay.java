@@ -19,13 +19,14 @@ public class MainDisplay {
 
     private void initFrame() {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         frame.setSize(new Dimension(1080, 720));
-//        frame.setLayout(borderLayout);
+        frame.setMinimumSize(new Dimension(720, 720));
     }
 
     private void initComponents() {
-        frame.add(new EDT().getMainContainer());
+        EDT edtScreen = new EDT();
+        frame.add(edtScreen.getMainContainer());
+        frame.setJMenuBar(edtScreen.getMainMenuBar());
     }
 
     public void show() {
