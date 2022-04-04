@@ -112,6 +112,37 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
         return -1;
     }
 
+    public void remove(Object o) {
+        if (o == null || head == null) return;
+
+        if (head.getValue().equals(o)) { // The target node is the head
+            head = head.next;
+
+            if (tail.getValue().equals(o)) {
+                tail = head;
+            }
+
+            length--;
+            return;
+        }
+
+        ListNode<T> current = head;
+        while (current.next != null && !current.next.getValue().equals(o)) {
+            current = current.next;
+        }
+
+        if (current.next == null || !current.next.getValue().equals(o)) {
+            return;
+        }
+
+        length--;
+        current.next = current.next.next;
+
+        if (current.next == null) { // The deleted node, was the last one in the list
+            tail = current;
+        }
+    }
+
     private ListNode<T> getNode(int index) {
         if (index >= length) return null;
 
