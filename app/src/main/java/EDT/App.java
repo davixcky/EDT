@@ -46,7 +46,12 @@ public class App {
             }
         }));
 
-        System.out.println(tree.find("Node C"));
+        System.out.println("Find: ");
+        System.out.println(tree.find("Node A")); // Node A will be printed out
+        System.out.println(tree.deleteNode("Node A")); // Node A is being removed
+        System.out.println(tree.find("Node A")); // Null
+        System.out.println(tree); // Node A and children should not appear in the tree
+        System.out.println(tree.find("Node A.1")); // Should return false
 
     }
 }
