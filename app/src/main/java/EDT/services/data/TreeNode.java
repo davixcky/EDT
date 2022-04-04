@@ -22,6 +22,12 @@ public abstract class TreeNode extends Node<String> {
         return true;
     }
 
+    public void deleteChild(TreeNode childNode) {
+        if (children == null) return;
+
+        children.remove(childNode);
+    }
+
     public TreeNode find(ILinkedHelper<TreeNode> func, TreeNode searchValue) {
         if (children == null) return null;
 

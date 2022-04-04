@@ -215,6 +215,31 @@ public class NAryTree {
         return nodeResult[0];
     }
 
+    public boolean deleteNode(String targetNode) {
+        if (targetNode == null) throw new RuntimeException("target node cannot be null");
+
+        if (root == null) return true;
+
+        final boolean[] isNodeRemoved = {false};
+        iterationQueue.reset();
+        iterationQueue.add(root);
+        while (!iterationQueue.isEmpty() && !isNodeRemoved[0]) {
+            TreeNode currentTreeNode = iterationQueue.poll();
+            currentTreeNode.forEachChild(new ILinkedHelper<TreeNode>() {
+                @Override
+                public void handle(TreeNode node) {
+                    iterationQueue.add(node);
+
+                    if (node.getValue().equals(targetNode)) {
+                        currentTreeNode.deleteChild(node);
+                        isNodeRemoved[0] = true;
+                    }
+                }
+            });
+        }
+
+        return isNodeRemoved[0];
+    }
 
     public enum NodeType {
         PACKAGE_NODE,
