@@ -206,7 +206,7 @@ public class NAryTree {
         forEachNode(new ILinkedHelper<TreeNode>() {
             @Override
             public void handle(TreeNode node) {
-                if (node.getValue().equals(targetValue) && nodeResult[0] != null) {
+                if (node.getValue().equals(targetValue) && nodeResult[0] == null) {
                     nodeResult[0] = node;
                 }
             }
