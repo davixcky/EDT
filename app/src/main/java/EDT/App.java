@@ -53,5 +53,13 @@ public class App {
         System.out.println(tree); // Node A and children should not appear in the tree
         System.out.println(tree.find("Node A.1")); // Should return false
 
+        System.out.println("\ninorder");
+        tree.inorder();
+
+        System.out.println("\npreorder: ");
+        tree.preorder();
+
+        System.out.println("\npostorder");
+        tree.postorder();
     }
 }

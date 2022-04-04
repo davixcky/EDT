@@ -55,6 +55,12 @@ public abstract class TreeNode extends Node<String> {
         return parentValue;
     }
 
+    public TreeNode getChildAt(int index) {
+        if (children == null) return null;
+
+        return children.getAt2(index);
+    }
+
     public int size() {
         if (children == null) return 0;
 

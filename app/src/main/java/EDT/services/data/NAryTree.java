@@ -241,6 +241,56 @@ public class NAryTree {
         return isNodeRemoved[0];
     }
 
+    public void inorder() {
+        internal_inorder(root);
+    }
+
+    public void preorder() {
+        internal_preorder(root);
+    }
+
+    public void postorder() {
+        internal_postorder(root);
+    }
+
+    private void internal_inorder(TreeNode root) {
+        if (root == null) return;
+
+        int total = root.size();
+        for (int i = 0; i < total - 1; i++) {
+            internal_inorder(root.getChildAt(i));
+        }
+
+        System.out.println(root.getValue());
+
+        internal_inorder(root.getChildAt(total - 1));
+    }
+
+    private void internal_preorder(TreeNode root) {
+        if (root == null) return;
+
+        System.out.println(root.getValue());
+        root.forEachChild(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                internal_preorder(node);
+            }
+        });
+    }
+
+    private void internal_postorder(TreeNode root) {
+        if (root == null) return;
+
+        root.forEachChild(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                internal_postorder(node);
+            }
+        });
+
+        System.out.println(root.getValue());
+    }
+
     public enum NodeType {
         PACKAGE_NODE,
         DELIVERABLE_NODE,
