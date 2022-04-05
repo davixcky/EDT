@@ -35,12 +35,4 @@ public class DeliverableTreeNode extends TreeNode {
         throw new UnsupportedOperationException("you cannot insert a child in a final node");
     }
 
-    @Override
-    public String toString(int index) {
-        return "DeliverableTreeNode{" +
-                "fileContent='" + fileContent + '\'' +
-                ", fullPath='" + fullPath + '\'' +
-                ", parentValue='" + getParentValue() + '\'' +
-                '}';
-    }
 }
