@@ -8,13 +8,13 @@ import java.io.IOException;
 
 public class NAryTree {
     private final Queue<TreeNode> iterationQueue;
-    private TreeNode root;
+    private final TreeNode root;
     private final LinkedList<LinkedList<String>> mapNames;
 
     private int totalPackagesNode, totalDeliverableNode;
 
     public NAryTree() {
-        root = null;
+        root = new PackageTreeNode("NO TITLE");
         iterationQueue = new Queue<>();
         mapNames = new LinkedList<>();
 
@@ -26,17 +26,10 @@ public class NAryTree {
     }
 
     public String getTitle() {
-        if (root == null) return null;
-
         return root.getValue();
     }
 
     public void setTitle(String title) {
-        if (root == null) {
-            root = new PackageTreeNode(title);
-            return;
-        }
-
         root.setValue(title);
     }
 
@@ -47,13 +40,6 @@ public class NAryTree {
 
     private boolean insert(String parentValue, String value, TreeNode node) {
         node.parentValue = parentValue;
-
-        // If the tree is empty, it will set the value as the root element
-        // TODO: It should create a root node with "no title" and add the node
-        if (parentValue == null && root == null) {
-            setTitle(value);
-            return true;
-        }
 
         if (parentValue == null) {
             throw new NullPointerException();
