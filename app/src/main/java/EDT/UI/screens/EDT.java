@@ -123,7 +123,6 @@ public class EDT {
         generate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: Call counter, depth and nodes with a single deliverable
                 reportsHandler();
             }
         });
