@@ -19,8 +19,9 @@ public class MainDisplay {
 
     private void initFrame() {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(1080, 720));
-        frame.setMinimumSize(new Dimension(720, 720));
+        frame.setTitle("Proyect Management Office");
+        frame.setMinimumSize(new Dimension(800, 600));
+        frame.setPreferredSize(new Dimension(800, 600));
     }
 
     private void initComponents() {

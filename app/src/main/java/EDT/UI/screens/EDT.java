@@ -17,27 +17,39 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 
 public class EDT {
-    private final JTree tree;
+    private JTree tree;
     private final JTree previewTree;
     private final NAryTree dataTree;
     private final LinkedList<DefaultMutableTreeNode> mutablesNodes;
     DefaultTreeModel treeModel;
     private JButton addNodeBtn;
     private JPanel mainContainer;
-    private JPanel leftContainer, centerContainer;
     private JMenuBar mainMenuBar;
     private JFileChooser fileChooser;
     private TextArea textArea;
     private ButtonGroup traversalMethods;
     private String currentTraversalType = null;
 
+    private JLabel Error;
+    private JPanel edtPane;
+    private JPanel edtLeftPane;
+    private JPanel edtLeftPane1;
+    private JPanel edtLeftPane2;
+    private JPanel edtLeftPane3;
+    private JLabel insertLabel;
+    private JLabel nameLabel;
+    private JLabel noteLabel;
+    private JScrollPane jScrollPane1;
+    private JTabbedPane mainPane;
+
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
-    private TextField nodeInputValue;
+    private JTextField nodeInputValue;
     private String currentParentValue = "EDT";
 
     public EDT() {
+
         dataTree = new NAryTree();
         String title = dataTree.getTitle();
 
@@ -73,11 +85,26 @@ public class EDT {
             }
         });
 
+        initiate();
 
         initContainers();
         initComponents();
+        mainContainer.add(mainPane, BorderLayout.CENTER);
+        mainPane.addTab("EDT", edtPane);
+        edtPane.setLayout(new BorderLayout());
+        leftEDTPane();
+        graphicalTree();
         initMenu();
     }
+
+    public void graphicalTree() {
+        edtPane.add(jScrollPane1, BorderLayout.WEST);
+        jScrollPane1.getViewport().add(previewTree);
+        jScrollPane1.setAutoscrolls(true);
+        jScrollPane1.setPreferredSize(new Dimension(300, 600));
+        previewTree.setPreferredSize(new Dimension(300, 600));
+    }
+
 
     public static void setPopupComponent(JComboBox<?> combo, Component comp, int widthIncr, int heightIncr) {
         final ComboPopup popup = (ComboPopup) combo.getUI().getAccessibleChild(combo, 0);
@@ -98,6 +125,30 @@ public class EDT {
 
         initFileSubMenu();
         initReportsSubMenu();
+    }
+
+    public void initiate() {
+        parentValuesComboBox = new JComboBox<>();
+        parentValuesComboBox.addItem(dataTree.getTitle());
+        mainPane = new JTabbedPane();
+        edtPane = new JPanel();
+        nodeInputValue = new JTextField();
+        jScrollPane1 = new JScrollPane();
+        insertLabel = new JLabel();
+        nameLabel = new JLabel();
+        Error = new JLabel();
+        noteLabel = new JLabel();
+        edtLeftPane = new JPanel();
+        edtLeftPane1 = new JPanel();
+        edtLeftPane2 = new JPanel();
+        edtLeftPane3 = new JPanel();
+        textArea = new TextArea();
+        textArea.setEditable(false);
+
+        setPopupComponent(parentValuesComboBox, tree, 400, 200);
+
+        addNodeBtn = new JButton();
+        nodeType = new JComboBox<>();
     }
 
     private void initFileSubMenu() {
@@ -189,59 +240,58 @@ public class EDT {
 
     private void initContainers() {
         mainContainer = new JPanel();
-        leftContainer = new JPanel();
-        centerContainer = new JPanel();
+        mainContainer.setLayout(new BorderLayout());
+    }
 
-        leftContainer.setMinimumSize(new Dimension(500, 600));
+    public void leftEDTPane1() {
+        edtLeftPane1.setLayout(new FlowLayout());
+        edtLeftPane1.add(insertLabel);
+        insertLabel.setText("Insertar en: ");
+        parentValuesComboBox.setPreferredSize(new Dimension(300, 30));
+        parentValuesComboBox.setMinimumSize(new Dimension(300, 30));
+        edtLeftPane1.add(parentValuesComboBox);
+    }
 
-        mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.LINE_AXIS));
-        leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.LINE_AXIS));
-        centerContainer.setLayout(new BoxLayout(centerContainer, BoxLayout.Y_AXIS));
+    public void leftEDTPane2() {
+        edtLeftPane2.setLayout(new FlowLayout());
+        edtLeftPane2.add(nameLabel);
+        nameLabel.setText("Nombre de paquete/entregable: ");
+        nodeInputValue.setPreferredSize(new Dimension(200, 20));
+        nodeInputValue.setMinimumSize(new Dimension(200, 20));
+        edtLeftPane2.add(nodeInputValue);
+    }
 
-        leftContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        centerContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    public void leftEDTPane3() {
+        edtLeftPane3.setLayout(new FlowLayout());
+        edtLeftPane3.add(nodeType);
+        nodeType.addItem("Paquete");
+        nodeType.addItem("Entregable");
+        edtLeftPane.add(addNodeBtn);
+        addNodeBtn.setText("Guardar nodo");
+        addNodeBtn.addActionListener(this::handleNodeSaved);
+    }
 
-        mainContainer.add(leftContainer);
-        mainContainer.add(Box.createRigidArea(new Dimension(5, 0)));
-        mainContainer.add(centerContainer);
+    public void leftEDTPane() {
+        edtPane.add(edtLeftPane, BorderLayout.CENTER);
+        edtLeftPane.setLayout(new BoxLayout(edtLeftPane, BoxLayout.PAGE_AXIS));
+        edtLeftPane.add(edtLeftPane1);
+        leftEDTPane1();
+        edtLeftPane.add(edtLeftPane2);
+        leftEDTPane2();
+        edtLeftPane.add(edtLeftPane3);
+        leftEDTPane3();
+        edtLeftPane.add(Error);
+        Error.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        Error.setForeground(Color.red);
+        noteLabel.setText("Nota: Al crear un paquete se le asigna de hijo un entregable temporal sin nombre");
+        edtLeftPane.add(noteLabel);
+        noteLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        edtLeftPane.add(textArea);
+        edtLeftPane.add(Box.createVerticalStrut(400));
     }
 
     private void initComponents() {
-        initLeftContainer();
-        initCenterContainer();
-
         initFileChooser();
-    }
-
-    private void initLeftContainer() {
-        addNodeBtn = new JButton("Save");
-        addNodeBtn.addActionListener(this::handleNodeSaved);
-
-        leftContainer.add(previewTree);
-        leftContainer.add(addNodeBtn);
-    }
-
-    private void initCenterContainer() {
-        initNodeTypeCombobox();
-
-        parentValuesComboBox = new JComboBox<>();
-        parentValuesComboBox.addItem(dataTree.getTitle());
-
-        setPopupComponent(parentValuesComboBox, tree, 400, 200);
-
-        nodeInputValue = new TextField();
-
-        textArea = new TextArea();
-        textArea.setEditable(false);
-
-        centerContainer.add(Box.createVerticalGlue());
-        centerContainer.add(parentValuesComboBox);
-        centerContainer.add(nodeType);
-        centerContainer.add(nodeInputValue);
-        centerContainer.add(addNodeBtn);
-        centerContainer.add(Box.createVerticalGlue());
-        centerContainer.add(textArea);
-        centerContainer.add(Box.createVerticalGlue());
     }
 
     private void handleNodeSaved(ActionEvent actionEvent) {
@@ -345,12 +395,6 @@ public class EDT {
         textArea.setText(textArea.getText() + "\n" + node.getValue());
     }
 
-    private void initNodeTypeCombobox() {
-        nodeType = new JComboBox<>();
-        nodeType.addItem("Paquete");
-        nodeType.addItem("Entregable");
-    }
-
     private void initFileChooser() {
         fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -363,7 +407,7 @@ public class EDT {
 
     private void fileExportHandler() {
         updateSuggestedName();
-        int result = fileChooser.showSaveDialog(centerContainer);
+        int result = fileChooser.showSaveDialog(null);
         if (result == JFileChooser.CANCEL_OPTION) {
             return;
         }
