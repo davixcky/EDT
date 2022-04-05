@@ -198,15 +198,20 @@ public class EDT {
         // Reset fields
         nodeInputValue.setText("");
 
-        boolean isNodeInserted = dataTree.insert(parentValue, currentValue, literalType);
+        boolean isNodeInserted;
+        try {
+            isNodeInserted = dataTree.insert(parentValue, currentValue, literalType);
+        } catch (Exception e) {
+            showMessage(e.getMessage());
+            return;
+        }
+
         if (!isNodeInserted) {
             showMessage(String.format("The package \"%s\" already contains \"%s\"", parentValue, currentValue));
             return;
         }
 
-        // TODO: Insert node in GUI Tree
-        // TODO: Handle when tree tries to insert in a deliverable node
-        DefaultMutableTreeNode n = new DefaultMutableTreeNode(currentValue);
+        DefaultMutableTreeNode newMutableTreeNode = new DefaultMutableTreeNode(currentValue);
         DefaultMutableTreeNode parent = new DefaultMutableTreeNode(parentValue);
         DefaultMutableTreeNode findParent = mutablesNodes.find(new ILinkedHelper<DefaultMutableTreeNode>() {
             @Override
@@ -214,14 +219,14 @@ public class EDT {
                 return a.toString().equals(b.toString());
             }
         }, parent);
-        treeModel.insertNodeInto(n, findParent, findParent.getChildCount());
+        treeModel.insertNodeInto(newMutableTreeNode, findParent, findParent.getChildCount());
         treeModel.reload();
         System.out.println(dataTree);
 
-        mutablesNodes.insert(n);
+        mutablesNodes.insert(newMutableTreeNode);
 
+        // Exit cause there is not a file handling required for a package node
         if (literalType.equalsIgnoreCase("paquete")) {
-            // Exit cause there is not a file handling required for a package node
             return;
         }
 
