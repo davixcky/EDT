@@ -38,6 +38,15 @@ public class NAryTree {
         return insert(parentValue, value, newNode);
     }
 
+    public boolean insert(String parentValue, String value, String type) {
+        NodeType nodeType = NodeType.PACKAGE_NODE;
+        if (type.equalsIgnoreCase("entregable")) {
+            nodeType = NodeType.DELIVERABLE_NODE;
+        }
+
+        return insert(parentValue, value, nodeType);
+    }
+
     private boolean insert(String parentValue, String value, TreeNode node) {
         node.parentValue = parentValue;
 
