@@ -27,24 +27,15 @@ public class EDT {
     private JPanel leftContainer, centerContainer;
     private JMenuBar mainMenuBar;
     private JFileChooser fileChooser;
+    private TextArea textArea;
+    private ButtonGroup traversalMethods;
+    private String currentTraversalType = null;
 
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
     private TextField nodeInputValue;
     private String currentParentValue = "EDT";
-
-    /*
-     * Menu:
-     *   File:
-     *       Export
-     *   Reports:
-     *       Generate
-     *   Traversal:
-     *       Preorder
-     *       Postorder
-     *       Inorder
-     * */
 
     public EDT() {
         dataTree = new NAryTree();
@@ -54,6 +45,7 @@ public class EDT {
 
         tree = new JTree();
         previewTree = new JTree();
+        previewTree.setMinimumSize(new Dimension(500, 600));
 
         tree.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -137,6 +129,62 @@ public class EDT {
         });
 
         reportsMenu.add(generate);
+        reportsMenu.addSeparator();
+
+        JMenu subMenu = new JMenu("Traversal method");
+
+        traversalMethods = new ButtonGroup();
+        JRadioButtonMenuItem menuItem;
+
+        menuItem = new JRadioButtonMenuItem("Preorder");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentTraversalType != null &&currentTraversalType.equals("Preorder")) {
+                    traversalMethods.clearSelection();
+                    currentTraversalType = null;
+                } else {
+                    currentTraversalType = "Preorder";
+                }
+                updateTraversalArea();
+            }
+        });
+        traversalMethods.add(menuItem);
+        subMenu.add(menuItem);
+
+        menuItem = new JRadioButtonMenuItem("Postorder");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentTraversalType != null && currentTraversalType.equals("Postorder")) {
+                    traversalMethods.clearSelection();
+                    currentTraversalType = null;
+                } else {
+                    currentTraversalType = "Preorder";
+                }
+                updateTraversalArea();
+            }
+        });
+        traversalMethods.add(menuItem);
+        subMenu.add(menuItem);
+
+        menuItem = new JRadioButtonMenuItem("Inorder");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentTraversalType != null && currentTraversalType.equals("Inorder")) {
+                    traversalMethods.clearSelection();
+                    currentTraversalType = null;
+                } else {
+                    currentTraversalType = "Preorder";
+                }
+                updateTraversalArea();
+            }
+        });
+        traversalMethods.add(menuItem);
+        subMenu.add(menuItem);
+
+        reportsMenu.add(subMenu);
         mainMenuBar.add(reportsMenu);
     }
 
@@ -144,6 +192,8 @@ public class EDT {
         mainContainer = new JPanel();
         leftContainer = new JPanel();
         centerContainer = new JPanel();
+
+        leftContainer.setMinimumSize(new Dimension(500, 600));
 
         mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.LINE_AXIS));
         leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.LINE_AXIS));
@@ -182,10 +232,16 @@ public class EDT {
 
         nodeInputValue = new TextField();
 
+        textArea = new TextArea();
+        textArea.setEditable(false);
+
         centerContainer.add(Box.createVerticalGlue());
         centerContainer.add(parentValuesComboBox);
         centerContainer.add(nodeType);
         centerContainer.add(nodeInputValue);
+        centerContainer.add(addNodeBtn);
+        centerContainer.add(Box.createVerticalGlue());
+        centerContainer.add(textArea);
         centerContainer.add(Box.createVerticalGlue());
     }
 
@@ -209,6 +265,8 @@ public class EDT {
             showMessage(String.format("The package \"%s\" already contains \"%s\"", parentValue, currentValue));
             return;
         }
+
+        updateTraversalArea();
 
         DefaultMutableTreeNode newMutableTreeNode = new DefaultMutableTreeNode(currentValue);
         DefaultMutableTreeNode parent = new DefaultMutableTreeNode(parentValue);
@@ -247,6 +305,45 @@ public class EDT {
             showMessage(e.getMessage());
         }
 
+    }
+
+    private void updateTraversalArea() {
+        textArea.setText("");
+
+        if (currentTraversalType == null) {
+            return;
+        }
+
+        switch (currentTraversalType) {
+            case "Preorder":
+                dataTree.preorder(new ILinkedHelper<TreeNode>() {
+                    @Override
+                    public void handle(TreeNode node) {
+                        funcHandler(node);
+                    }
+                });
+                break;
+            case "Postorder":
+                dataTree.postorder(new ILinkedHelper<TreeNode>() {
+                    @Override
+                    public void handle(TreeNode node) {
+                        funcHandler(node);
+                    }
+                });
+                break;
+            case "Inorder":
+                dataTree.inorder(new ILinkedHelper<TreeNode>() {
+                    @Override
+                    public void handle(TreeNode node) {
+                        funcHandler(node);
+                    }
+                });
+                break;
+        }
+    }
+
+    private void funcHandler(TreeNode node) {
+        textArea.setText(textArea.getText() + "\n" + node.getValue());
     }
 
     private void initNodeTypeCombobox() {
