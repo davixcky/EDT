@@ -46,6 +46,8 @@ public class EDT {
     private JScrollPane jScrollPane1;
     private JTabbedPane mainPane;
 
+    private boolean ignoreCaseSearch, equalState;
+
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
@@ -55,6 +57,7 @@ public class EDT {
     public EDT(String edtTitle) {
 
         dataTree = new NAryTree();
+        ignoreCaseSearch = equalState = false;
 
         dataTree.setTitle(edtTitle);
         String title = dataTree.getTitle();
@@ -131,6 +134,7 @@ public class EDT {
 
         initFileSubMenu();
         initReportsSubMenu();
+        initActionsSubMenu();
     }
 
     public void initiate() {
@@ -173,8 +177,10 @@ public class EDT {
         renameProject.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String title;
-                while ((title = JOptionPane.showInputDialog(null, "Digite el nombre del proyecto")) == null) {};
+                String title = JOptionPane.showInputDialog(null, "Digite el nuevo nombre del proyecto");
+                if (title == null) {
+                    return;
+                }
 
                 // TODO: Update tree data
                 dataTree.setTitle(title);
@@ -186,6 +192,104 @@ public class EDT {
         fileMenu.addSeparator();
         fileMenu.add(renameProject);
         mainMenuBar.add(fileMenu);
+    }
+
+    private void initActionsSubMenu() {
+        JMenu actions = new JMenu("Actions");
+
+        JMenuItem deleteNode = new JMenuItem("Delete node");
+        deleteNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nodeValue = JOptionPane.showInputDialog(null, "Digite el valor del nodo a eliminar");
+                if (nodeValue == null) {
+                    return;
+                }
+
+                DefaultMutableTreeNode parent = new DefaultMutableTreeNode(nodeValue);
+                DefaultMutableTreeNode findParent = mutablesNodes.find(new ILinkedHelper<DefaultMutableTreeNode>() {
+                    @Override
+                    public boolean compare(DefaultMutableTreeNode a, DefaultMutableTreeNode b) {
+                        return a.toString().equals(b.toString());
+                    }
+                }, parent);
+
+                if (findParent == null) {
+                    showMessage("Nodo no existe. Intente nuevamente");
+                    return;
+                }
+
+                treeModel.removeNodeFromParent(findParent);
+                dataTree.deleteNode(nodeValue);
+            }
+        });
+
+        JCheckBoxMenuItem ignoreCase = new JCheckBoxMenuItem("Ignore case");
+        ignoreCase.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ignoreCaseSearch = !ignoreCaseSearch;
+            }
+        });
+        ignoreCase.setState(true);
+
+        JCheckBoxMenuItem equal = new JCheckBoxMenuItem("Exact node");
+        equal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                equalState = !equalState;
+            }
+        });
+        equal.setState(true);
+
+        ignoreCaseSearch = equalState = true;
+
+        JMenuItem searchNode = new JMenuItem("Find");
+        searchNode.setAccelerator(KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        searchNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String targetNode = JOptionPane.showInputDialog(null, "Digite el valor del nodo a encontrar");
+                if (targetNode == null || targetNode.equals("")) return;
+
+                LinkedList<TreeNode> nodesSearch = dataTree.filter(new ILinkedIFilter<TreeNode>() {
+                    @Override
+                    public boolean isValid(TreeNode value) {
+                        if (ignoreCaseSearch && equalState) {
+                            return value.getValue().equalsIgnoreCase(targetNode);
+                        }
+
+                        if (ignoreCaseSearch) {
+                            return value.getValue().toLowerCase().contains(targetNode);
+                        }
+
+                        if (equalState) {
+                            return value.getValue().equals(targetNode);
+                        }
+
+                        return false;
+                    }
+                });
+
+                System.out.println();
+                System.out.println("Nodos encontrados");
+                for (ListNode<TreeNode> node: nodesSearch) {
+                    System.out.println(node.getValue().getValue());
+                }
+            }
+        });
+
+        JMenu searchSubMenu = new JMenu("Search");
+        searchSubMenu.add(searchNode);
+        searchSubMenu.addSeparator();
+        searchSubMenu.add(ignoreCase);
+        searchSubMenu.add(equal);
+
+        actions.add(deleteNode);
+        actions.addSeparator();
+        actions.add(searchSubMenu);
+
+        mainMenuBar.add(actions);
     }
 
     private void initReportsSubMenu() {
