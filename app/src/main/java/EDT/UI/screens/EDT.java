@@ -200,7 +200,7 @@ public class EDT {
 
         boolean isNodeInserted = dataTree.insert(parentValue, currentValue, literalType);
         if (!isNodeInserted) {
-            // TODO: Node was already inserted in the tree
+            showMessage(String.format("The package \"%s\" already contains \"%s\"", parentValue, currentValue));
             return;
         }
 
@@ -270,11 +270,15 @@ public class EDT {
         try {
             dataTree.toFile(fileChooser.getSelectedFile());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            showMessage(e.getMessage());
             return;
         }
 
-        JOptionPane.showMessageDialog(null, "Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
+        showMessage("Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
+    }
+
+    private void showMessage(String message) {
+        JOptionPane.showMessageDialog(mainContainer, message);
     }
 
     public Container getMainContainer() {
