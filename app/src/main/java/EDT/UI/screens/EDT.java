@@ -9,19 +9,19 @@ import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Locale;
 
 public class EDT {
-    private JButton addNodeBtn;
-
-    private JTree tree, previewTree;
     DefaultTreeModel treeModel;
-
+    private JButton addNodeBtn;
+    private final JTree tree;
+    private final JTree previewTree;
     private JPanel mainContainer;
     private JPanel leftContainer, centerContainer;
 
-    private NAryTree dataTree;
+    private final NAryTree dataTree;
 
     private JMenuBar mainMenuBar;
 
@@ -32,22 +32,23 @@ public class EDT {
     private TextField nodeInputValue;
     private String currentParentValue = "EDT";
 
-    private LinkedList<DefaultMutableTreeNode> mutablesNodes;
+    private final LinkedList<DefaultMutableTreeNode> mutablesNodes;
 
     /*
-    * Menu:
-    *   File:
-    *       Export
-    *   Reports:
-    *       Generate
-    *   Traversal:
-    *       Preorder
-    *       Postorder
-    *       Inorder
-    * */
+     * Menu:
+     *   File:
+     *       Export
+     *   Reports:
+     *       Generate
+     *   Traversal:
+     *       Preorder
+     *       Postorder
+     *       Inorder
+     * */
 
     public EDT() {
         dataTree = new NAryTree();
+        String title = dataTree.getTitle();
 
         mutablesNodes = new LinkedList<>();
 
@@ -56,37 +57,29 @@ public class EDT {
 
         tree.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        DefaultMutableTreeNode n = new DefaultMutableTreeNode("EDT");
-        treeModel = new DefaultTreeModel(n);
+        DefaultMutableTreeNode firstNode = new DefaultMutableTreeNode(title);
+        DefaultMutableTreeNode emptyNode = new DefaultMutableTreeNode("");
+
+        treeModel = new DefaultTreeModel(firstNode);
         tree.setModel(treeModel);
-        DefaultMutableTreeNode Fake = new DefaultMutableTreeNode("");
-        treeModel.insertNodeInto(Fake, n, n.getChildCount());
-        dataTree.setTitle("EDT");
-
         previewTree.setModel(treeModel);
+        treeModel.insertNodeInto(emptyNode, firstNode, firstNode.getChildCount());
 
-        mutablesNodes.insert(n);
-//        treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("EDT"));
-//
-//
-//        tree = new JTree();
-//
-//        dataTree.setTitle("EDT");
-//        tree.setModel(treeModel);
+        mutablesNodes.insert(firstNode);
 
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                parentValuesComboBox.removeAllItems();
-//                parentValuesComboBox.addItem(e.getPath().getLastPathComponent().toString());
-                System.out.println("path " + e.getPath().getLastPathComponent().toString());
-//                parentValuesComboBox.setSelectedItem(e.getPath().getLastPathComponent().toString());
+                try {
+                    parentValuesComboBox.removeAllItems();
+                    currentParentValue = e.getPath().getLastPathComponent().toString();
+                    parentValuesComboBox.setSelectedItem(currentParentValue);
+                    parentValuesComboBox.addItem(currentParentValue);
+                    parentValuesComboBox.getUI().setPopupVisible(parentValuesComboBox, false);
+                   ( (ComboPopup) parentValuesComboBox.getUI().getAccessibleChild(parentValuesComboBox, 0)).hide();
 
-                currentParentValue = e.getPath().getLastPathComponent().toString();
-//                System.out.println("selected item " + parentValuesComboBox.getSelectedItem());
-                parentValuesComboBox.setSelectedItem(currentParentValue);
-                parentValuesComboBox.addItem(currentParentValue);
-
+                } catch (Exception ignored) {
+                }
             }
         });
 
@@ -94,6 +87,20 @@ public class EDT {
         initContainers();
         initComponents();
         initMenu();
+    }
+
+    public static void setPopupComponent(JComboBox<?> combo, Component comp, int widthIncr, int heightIncr) {
+        final ComboPopup popup = (ComboPopup) combo.getUI().getAccessibleChild(combo, 0);
+        if (popup instanceof Container) {
+            final Container c = (Container) popup;
+            c.removeAll();
+            c.setLayout(new GridLayout(1, 1));
+            c.add(comp);
+            final Dimension size = comp.getPreferredSize();
+            size.width += widthIncr;
+            size.height += heightIncr;
+            c.setPreferredSize(size);
+        }
     }
 
     private void initMenu() {
@@ -152,7 +159,7 @@ public class EDT {
         centerContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         mainContainer.add(leftContainer);
-        mainContainer.add(Box.createRigidArea(new Dimension(5,0)));
+        mainContainer.add(Box.createRigidArea(new Dimension(5, 0)));
         mainContainer.add(centerContainer);
     }
 
@@ -173,10 +180,9 @@ public class EDT {
         initNodeTypeCombobox();
 
         parentValuesComboBox = new JComboBox<>();
-        parentValuesComboBox.addItem("EDT");
+        parentValuesComboBox.addItem(dataTree.getTitle());
 
         setPopupComponent(parentValuesComboBox, tree, 400, 200);
-
 
         nodeInputValue = new TextField();
 
@@ -187,20 +193,6 @@ public class EDT {
         centerContainer.add(Box.createVerticalGlue());
     }
 
-    public static void setPopupComponent(JComboBox<?> combo, Component comp, int widthIncr, int heightIncr) {
-        final ComboPopup popup = (ComboPopup) combo.getUI().getAccessibleChild(combo, 0);
-        if (popup instanceof Container) {
-            final Container c = (Container) popup;
-            c.removeAll();
-            c.setLayout(new GridLayout(1, 1));
-            c.add(comp);
-            final Dimension size = comp.getPreferredSize();
-            size.width += widthIncr;
-            size.height += heightIncr;
-            c.setPreferredSize(size);
-        }
-    }
-
     private void handleNodeSaved(ActionEvent actionEvent) {
         NAryTree.NodeType nodeType = getNodeType();
         String parentValue = parentValuesComboBox.getSelectedItem().toString(); // TODO: Replace by dropdown value
@@ -208,9 +200,6 @@ public class EDT {
 
         // Reset fields
         nodeInputValue.setText("");
-
-        System.out.println("Parent " + parentValue);
-        System.out.println("Current " + currentValue);
 
         boolean isNodeInserted = dataTree.insert(parentValue, currentValue, nodeType);
         if (!isNodeInserted) {
@@ -233,8 +222,6 @@ public class EDT {
         System.out.println(dataTree);
 
         mutablesNodes.insert(n);
-
-        System.out.println("root tree " + ((DefaultMutableTreeNode) treeModel.getRoot()).toString());
 
         if (nodeType == NAryTree.NodeType.PACKAGE_NODE) {
             // Exit cause there is not a file handling required for a package node
@@ -262,8 +249,10 @@ public class EDT {
 
     private NAryTree.NodeType getNodeType() {
         switch (nodeType.getSelectedItem().toString().toLowerCase(Locale.ROOT)) {
-            case "paquete": return NAryTree.NodeType.PACKAGE_NODE;
-            case "entregable": return NAryTree.NodeType.DELIVERABLE_NODE;
+            case "paquete":
+                return NAryTree.NodeType.PACKAGE_NODE;
+            case "entregable":
+                return NAryTree.NodeType.DELIVERABLE_NODE;
         }
 
         return NAryTree.NodeType.PACKAGE_NODE;
