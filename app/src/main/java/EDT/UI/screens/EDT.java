@@ -3,6 +3,8 @@ package EDT.UI.screens;
 import EDT.services.data.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileSystemView;
@@ -12,6 +14,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -48,9 +52,11 @@ public class EDT {
     private JTextField nodeInputValue;
     private String currentParentValue = "EDT";
 
-    public EDT() {
+    public EDT(String edtTitle) {
 
         dataTree = new NAryTree();
+
+        dataTree.setTitle(edtTitle);
         String title = dataTree.getTitle();
 
         mutablesNodes = new LinkedList<>();
@@ -90,7 +96,7 @@ public class EDT {
         initContainers();
         initComponents();
         mainContainer.add(mainPane, BorderLayout.CENTER);
-        mainPane.addTab("EDT", edtPane);
+        mainPane.addTab(edtTitle, edtPane);
         edtPane.setLayout(new BorderLayout());
         leftEDTPane();
         graphicalTree();
@@ -163,7 +169,22 @@ public class EDT {
             }
         });
 
+        JMenuItem renameProject = new JMenuItem("Rename project");
+        renameProject.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title;
+                while ((title = JOptionPane.showInputDialog(null, "Digite el nombre del proyecto")) == null) {};
+
+                // TODO: Update tree data
+                dataTree.setTitle(title);
+                ((DefaultMutableTreeNode) treeModel.getRoot()).setUserObject(title);
+            }
+        });
+
         fileMenu.add(export);
+        fileMenu.addSeparator();
+        fileMenu.add(renameProject);
         mainMenuBar.add(fileMenu);
     }
 
@@ -269,6 +290,7 @@ public class EDT {
         edtLeftPane.add(addNodeBtn);
         addNodeBtn.setText("Guardar nodo");
         addNodeBtn.addActionListener(this::handleNodeSaved);
+        addNodeBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
     }
 
     public void leftEDTPane() {
