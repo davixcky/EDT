@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
 
 public class EDT {
     private final JTree tree;
@@ -230,23 +231,24 @@ public class EDT {
             return;
         }
 
-        // TODO: Handle file content upload and update the node with the file value
-        LinkedList<TreeNode> nodes = new LinkedList<>();
-        dataTree.filter(new ILinkedIFilter<TreeNode>() {
+        LinkedList<TreeNode> nodes = dataTree.filter(new ILinkedIFilter<TreeNode>() {
             @Override
             public boolean isValid(TreeNode node) {
                 return node.getParentValue().equals(parentValue) && node.getValue().equals(currentValue);
             }
         });
 
-        DeliverableTreeNode node = (DeliverableTreeNode) nodes.getAt2(0);
-        if (node == null) {
-            // TODO: This will not happen cause the node was inserted in the previous case
-            return;
+        while (fileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) {
         }
 
-        String fileContent = "file content";
-        node.setFileContent(fileContent);
+        DeliverableTreeNode node = (DeliverableTreeNode) nodes.getAt2(0);
+        try {
+            String fileContent = Files.readString(fileChooser.getSelectedFile().toPath());
+            node.setFileContent(fileContent);
+        } catch (Exception e) {
+            showMessage(e.getMessage());
+        }
+
     }
 
     private void initNodeTypeCombobox() {
