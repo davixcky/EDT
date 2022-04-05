@@ -5,12 +5,14 @@ import EDT.services.data.*;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class EDT {
     private final JTree tree;
@@ -22,6 +24,8 @@ public class EDT {
     private JPanel mainContainer;
     private JPanel leftContainer, centerContainer;
     private JMenuBar mainMenuBar;
+    private JFileChooser fileChooser;
+
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
@@ -110,8 +114,7 @@ public class EDT {
         export.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: Launch fileChooser and call treeData.toFile()
-                System.out.println("Exporting file");
+                fileExportHandler();
             }
         });
 
@@ -158,6 +161,8 @@ public class EDT {
     private void initComponents() {
         initLeftContainer();
         initCenterContainer();
+
+        initFileChooser();
     }
 
     private void initLeftContainer() {
@@ -187,8 +192,8 @@ public class EDT {
 
     private void handleNodeSaved(ActionEvent actionEvent) {
         String literalType = nodeType.getSelectedItem().toString();
-        String parentValue = parentValuesComboBox.getSelectedItem().toString(); // TODO: Replace by dropdown value
-        String currentValue = nodeInputValue.getText(); // TODO: Replace by node value
+        String parentValue = parentValuesComboBox.getSelectedItem().toString();
+        String currentValue = nodeInputValue.getText();
 
         // Reset fields
         nodeInputValue.setText("");
@@ -243,6 +248,33 @@ public class EDT {
         nodeType = new JComboBox<>();
         nodeType.addItem("Paquete");
         nodeType.addItem("Entregable");
+    }
+
+    private void initFileChooser() {
+        fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        updateSuggestedName();
+    }
+
+    private void updateSuggestedName() {
+        fileChooser.setSelectedFile(new File(FileSystemView.getFileSystemView().getDefaultDirectory(), dataTree.getTitle() + ".txt"));
+    }
+
+    private void fileExportHandler() {
+        updateSuggestedName();
+        int result = fileChooser.showSaveDialog(centerContainer);
+        if (result == JFileChooser.CANCEL_OPTION) {
+            return;
+        }
+
+        try {
+            dataTree.toFile(fileChooser.getSelectedFile());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return;
+        }
+
+        JOptionPane.showMessageDialog(null, "Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
     }
 
     public Container getMainContainer() {
