@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 
 public class EDT {
@@ -131,6 +132,7 @@ public class EDT {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO: Call counter, depth and nodes with a single deliverable
+                reportsHandler();
             }
         });
 
@@ -146,10 +148,6 @@ public class EDT {
         mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.LINE_AXIS));
         leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.LINE_AXIS));
         centerContainer.setLayout(new BoxLayout(centerContainer, BoxLayout.Y_AXIS));
-
-        mainContainer.setBackground(Color.black);
-        leftContainer.setBackground(Color.red);
-        centerContainer.setBackground(Color.blue);
 
         leftContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         centerContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -282,6 +280,63 @@ public class EDT {
         }
 
         showMessage("Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
+    }
+
+    private void reportsHandler() {
+        fileChooser.setSelectedFile(new File(FileSystemView.getFileSystemView().getDefaultDirectory(), dataTree.getTitle() + "_report.txt"));
+        while (fileChooser.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
+        }
+
+        StringBuilder data = new StringBuilder();
+        data.append(String.format("Reporte para [%s]:\n\n", dataTree.getTitle()));
+
+        data.append("1. Numero de elementos (segun tipo)\n");
+        data.append(String.format("\t# Paquetes       = %d\n", dataTree.getTotalPackagesNode()));
+        data.append(String.format("\t# Entregables    = %d\n", dataTree.getTotalDeliverableNode()));
+        data.append(String.format("\t---------- TOTAL = %d\n\n", dataTree.getSize()));
+
+        data.append("2. Profundidad maxima\n");
+        data.append(String.format("\t# Profundidad       = %d\n\n", dataTree.depth()));
+
+        // Calculates nodes with a single deliverable node
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+        final int[] counter = {0};
+        dataTree.forEachNode(new ILinkedHelper<TreeNode>() {
+            @Override
+            public void handle(TreeNode node) {
+                counter[0] = 0;
+                node.forEachChild(new ILinkedHelper<TreeNode>() {
+                    @Override
+                    public void handle(TreeNode child) {
+                        if (NAryTree.isNotPackageInstance(child)) {
+                            counter[0] += 1;
+                        }
+                    }
+                });
+
+                if (counter[0] == 1) {
+                    nodes.insert(node);
+                }
+            }
+        });
+
+
+        data.append("3. Nodos con un solo entregable\n");
+        int i = 0;
+        for (ListNode<TreeNode> listNode : nodes) {
+            TreeNode node = listNode.getValue();
+            data.append(String.format("\t%d. \"%s\" (hijo de \"%s\")\n", i++, node.getValue(), node.getParentValue()));
+        }
+        data.append(String.format("---Total---   %d elements\n\n", nodes.size()));
+
+        try {
+            FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile());
+            fileWriter.write(data.toString());
+            fileWriter.close();
+        } catch (Exception e) {
+            showMessage(e.getMessage());
+        }
+
     }
 
     private void showMessage(String message) {
