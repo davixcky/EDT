@@ -11,28 +11,22 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Locale;
 
 public class EDT {
-    DefaultTreeModel treeModel;
-    private JButton addNodeBtn;
     private final JTree tree;
     private final JTree previewTree;
+    private final NAryTree dataTree;
+    private final LinkedList<DefaultMutableTreeNode> mutablesNodes;
+    DefaultTreeModel treeModel;
+    private JButton addNodeBtn;
     private JPanel mainContainer;
     private JPanel leftContainer, centerContainer;
-
-    private final NAryTree dataTree;
-
     private JMenuBar mainMenuBar;
-
-
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
     private TextField nodeInputValue;
     private String currentParentValue = "EDT";
-
-    private final LinkedList<DefaultMutableTreeNode> mutablesNodes;
 
     /*
      * Menu:
@@ -76,8 +70,6 @@ public class EDT {
                     parentValuesComboBox.setSelectedItem(currentParentValue);
                     parentValuesComboBox.addItem(currentParentValue);
                     parentValuesComboBox.getUI().setPopupVisible(parentValuesComboBox, false);
-                   ( (ComboPopup) parentValuesComboBox.getUI().getAccessibleChild(parentValuesComboBox, 0)).hide();
-
                 } catch (Exception ignored) {
                 }
             }
@@ -194,14 +186,14 @@ public class EDT {
     }
 
     private void handleNodeSaved(ActionEvent actionEvent) {
-        NAryTree.NodeType nodeType = getNodeType();
+        String literalType = nodeType.getSelectedItem().toString();
         String parentValue = parentValuesComboBox.getSelectedItem().toString(); // TODO: Replace by dropdown value
         String currentValue = nodeInputValue.getText(); // TODO: Replace by node value
 
         // Reset fields
         nodeInputValue.setText("");
 
-        boolean isNodeInserted = dataTree.insert(parentValue, currentValue, nodeType);
+        boolean isNodeInserted = dataTree.insert(parentValue, currentValue, literalType);
         if (!isNodeInserted) {
             // TODO: Node was already inserted in the tree
             return;
@@ -223,7 +215,7 @@ public class EDT {
 
         mutablesNodes.insert(n);
 
-        if (nodeType == NAryTree.NodeType.PACKAGE_NODE) {
+        if (literalType.equalsIgnoreCase("paquete")) {
             // Exit cause there is not a file handling required for a package node
             return;
         }
@@ -245,17 +237,6 @@ public class EDT {
 
         String fileContent = "file content";
         node.setFileContent(fileContent);
-    }
-
-    private NAryTree.NodeType getNodeType() {
-        switch (nodeType.getSelectedItem().toString().toLowerCase(Locale.ROOT)) {
-            case "paquete":
-                return NAryTree.NodeType.PACKAGE_NODE;
-            case "entregable":
-                return NAryTree.NodeType.DELIVERABLE_NODE;
-        }
-
-        return NAryTree.NodeType.PACKAGE_NODE;
     }
 
     private void initNodeTypeCombobox() {
