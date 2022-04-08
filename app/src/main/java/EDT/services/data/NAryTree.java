@@ -213,8 +213,6 @@ public class NAryTree {
     public boolean deleteNode(String targetNode) {
         if (targetNode == null) throw new RuntimeException("target node cannot be null");
 
-        if (root == null) return true;
-
         final boolean[] isNodeRemoved = {false};
         iterationQueue.reset();
         iterationQueue.add(root);
@@ -226,6 +224,11 @@ public class NAryTree {
                     iterationQueue.add(node);
 
                     if (node.getValue().equals(targetNode)) {
+                        if (isNotPackageInstance(node)) {
+                            totalDeliverableNode--;
+                        } else {
+                            totalPackagesNode--;
+                        }
                         currentTreeNode.deleteChild(node);
                         isNodeRemoved[0] = true;
                     }

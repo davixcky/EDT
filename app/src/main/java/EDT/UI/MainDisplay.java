@@ -25,7 +25,10 @@ public class MainDisplay {
     }
 
     private void initComponents() {
-        EDT edtScreen = new EDT();
+        String title;
+        while ((title = JOptionPane.showInputDialog(null, "Digite el nombre del proyecto")) == null) {};
+
+        EDT edtScreen = new EDT(title);
         frame.add(edtScreen.getMainContainer());
         frame.setJMenuBar(edtScreen.getMainMenuBar());
     }

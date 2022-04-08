@@ -3,6 +3,8 @@ package EDT.UI.screens;
 import EDT.services.data.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileSystemView;
@@ -12,6 +14,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -42,15 +46,20 @@ public class EDT {
     private JScrollPane jScrollPane1;
     private JTabbedPane mainPane;
 
+    private boolean ignoreCaseSearch, equalState;
+
     // Nodes input
     private JComboBox<String> parentValuesComboBox;
     private JComboBox<String> nodeType;
     private JTextField nodeInputValue;
     private String currentParentValue = "EDT";
 
-    public EDT() {
+    public EDT(String edtTitle) {
 
         dataTree = new NAryTree();
+        ignoreCaseSearch = equalState = false;
+
+        dataTree.setTitle(edtTitle);
         String title = dataTree.getTitle();
 
         mutablesNodes = new LinkedList<>();
@@ -90,7 +99,7 @@ public class EDT {
         initContainers();
         initComponents();
         mainContainer.add(mainPane, BorderLayout.CENTER);
-        mainPane.addTab("EDT", edtPane);
+        mainPane.addTab(edtTitle, edtPane);
         edtPane.setLayout(new BorderLayout());
         leftEDTPane();
         graphicalTree();
@@ -125,6 +134,7 @@ public class EDT {
 
         initFileSubMenu();
         initReportsSubMenu();
+        initActionsSubMenu();
     }
 
     public void initiate() {
@@ -163,8 +173,123 @@ public class EDT {
             }
         });
 
+        JMenuItem renameProject = new JMenuItem("Rename project");
+        renameProject.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = JOptionPane.showInputDialog(null, "Digite el nuevo nombre del proyecto");
+                if (title == null) {
+                    return;
+                }
+
+                // TODO: Update tree data
+                dataTree.setTitle(title);
+                ((DefaultMutableTreeNode) treeModel.getRoot()).setUserObject(title);
+            }
+        });
+
         fileMenu.add(export);
+        fileMenu.addSeparator();
+        fileMenu.add(renameProject);
         mainMenuBar.add(fileMenu);
+    }
+
+    private void initActionsSubMenu() {
+        JMenu actions = new JMenu("Actions");
+
+        JMenuItem deleteNode = new JMenuItem("Delete node");
+        deleteNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nodeValue = JOptionPane.showInputDialog(null, "Digite el valor del nodo a eliminar");
+                if (nodeValue == null) {
+                    return;
+                }
+
+                DefaultMutableTreeNode parent = new DefaultMutableTreeNode(nodeValue);
+                DefaultMutableTreeNode findParent = mutablesNodes.find(new ILinkedHelper<DefaultMutableTreeNode>() {
+                    @Override
+                    public boolean compare(DefaultMutableTreeNode a, DefaultMutableTreeNode b) {
+                        return a.toString().equals(b.toString());
+                    }
+                }, parent);
+
+                if (findParent == null) {
+                    showMessage("Nodo no existe. Intente nuevamente");
+                    return;
+                }
+
+                treeModel.removeNodeFromParent(findParent);
+                dataTree.deleteNode(nodeValue);
+            }
+        });
+
+        JCheckBoxMenuItem ignoreCase = new JCheckBoxMenuItem("Ignore case");
+        ignoreCase.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ignoreCaseSearch = !ignoreCaseSearch;
+            }
+        });
+        ignoreCase.setState(true);
+
+        JCheckBoxMenuItem equal = new JCheckBoxMenuItem("Exact node");
+        equal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                equalState = !equalState;
+            }
+        });
+        equal.setState(true);
+
+        ignoreCaseSearch = equalState = true;
+
+        JMenuItem searchNode = new JMenuItem("Find");
+        searchNode.setAccelerator(KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        searchNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String targetNode = JOptionPane.showInputDialog(null, "Digite el valor del nodo a encontrar");
+                if (targetNode == null || targetNode.equals("")) return;
+
+                LinkedList<TreeNode> nodesSearch = dataTree.filter(new ILinkedIFilter<TreeNode>() {
+                    @Override
+                    public boolean isValid(TreeNode value) {
+                        if (ignoreCaseSearch && equalState) {
+                            return value.getValue().equalsIgnoreCase(targetNode);
+                        }
+
+                        if (ignoreCaseSearch) {
+                            return value.getValue().toLowerCase().contains(targetNode);
+                        }
+
+                        if (equalState) {
+                            return value.getValue().equals(targetNode);
+                        }
+
+                        return false;
+                    }
+                });
+
+                System.out.println();
+                System.out.println("Nodos encontrados");
+                for (ListNode<TreeNode> node: nodesSearch) {
+                    System.out.println(node.getValue().getValue());
+                }
+            }
+        });
+
+        JMenu searchSubMenu = new JMenu("Search");
+        searchSubMenu.add(searchNode);
+        searchSubMenu.addSeparator();
+        searchSubMenu.add(ignoreCase);
+        searchSubMenu.add(equal);
+
+        actions.add(deleteNode);
+        actions.addSeparator();
+        actions.add(searchSubMenu);
+
+        mainMenuBar.add(actions);
     }
 
     private void initReportsSubMenu() {
@@ -271,6 +396,7 @@ public class EDT {
         addNodeBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
         addNodeBtn.setText("Guardar nodo");
         addNodeBtn.addActionListener(this::handleNodeSaved);
+        addNodeBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
     }
 
     public void leftEDTPane() {
