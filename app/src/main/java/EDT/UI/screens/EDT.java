@@ -264,9 +264,11 @@ public class EDT {
     public void leftEDTPane3() {
         edtLeftPane3.setLayout(new FlowLayout());
         edtLeftPane3.add(nodeType);
+        nodeType.setAlignmentX(JComboBox.CENTER_ALIGNMENT);
         nodeType.addItem("Paquete");
         nodeType.addItem("Entregable");
         edtLeftPane.add(addNodeBtn);
+        addNodeBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
         addNodeBtn.setText("Guardar nodo");
         addNodeBtn.addActionListener(this::handleNodeSaved);
     }
