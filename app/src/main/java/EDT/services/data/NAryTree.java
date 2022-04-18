@@ -147,8 +147,8 @@ public class NAryTree {
         LinkedList<String> mapPath = mapNames.getAt2(mapIndex);
         StringBuilder literalPath = new StringBuilder();
 
-        for (ListNode<String> node : mapPath) {
-            literalPath.append(node.getValue()).append("/");
+        for (String node : mapPath) {
+            literalPath.append(node).append("/");
         }
 
         literalPath.append(newNodeValue);

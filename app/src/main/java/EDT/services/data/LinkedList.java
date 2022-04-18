@@ -2,7 +2,7 @@ package EDT.services.data;
 
 import java.util.Iterator;
 
-public class LinkedList<T> implements Iterable<ListNode<T>> {
+public class LinkedList<T> implements Iterable<T> {
     protected ListNode<T> head, tail;
     protected int length;
 
@@ -14,9 +14,9 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     public LinkedList<T> filter(ILinkedIFilter<T> filter) {
         LinkedList<T> filtered = new LinkedList<>();
 
-        for (ListNode<T> el: this) {
-            if (filter.isValid(el.getValue())) {
-                filtered.insert(el.getValue());
+        for (T el: this) {
+            if (filter.isValid(el)) {
+                filtered.insert(el);
             }
         }
 
@@ -41,9 +41,9 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     }
 
     @Override
-    public Iterator<ListNode<T>> iterator() {
+    public Iterator<T> iterator() {
 
-        return new Iterator<ListNode<T>>() {
+        return new Iterator<T>() {
             private ListNode<T> currentNode = head;
 
             @Override
@@ -52,10 +52,10 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
             }
 
             @Override
-            public ListNode<T> next() {
+            public T next() {
                 ListNode<T> tmp = currentNode;
                 currentNode = currentNode.getNext();
-                return tmp;
+                return tmp.getValue();
             }
 
             @Override
@@ -66,10 +66,9 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     }
 
     public T find(ILinkedHelper<T> comparator, T searchValue) {
-        for (ListNode<T> node : this) {
-            T nodeValue = node.getValue();
-            if (comparator.compare(nodeValue, searchValue)) {
-                return nodeValue;
+        for (T node : this) {
+            if (comparator.compare(node, searchValue)) {
+                return node;
             }
         }
 
@@ -79,8 +78,9 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     @Override
     public String toString() {
         StringBuilder listNodes = new StringBuilder();
-        for (ListNode<T> node : this) { //if next element exists
-            listNodes.append(node).append(node.next != null ? "->" : "|");
+        Iterator<T> iterator = this.iterator();
+        while (iterator.hasNext()) {
+            listNodes.append(iterator.next()).append(iterator.hasNext() ? "->" : "|");
         }
 
         return "LinkedList{" +
@@ -103,8 +103,8 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
     public int indexOf(T element) {
         int index = 0;
 
-        for (ListNode<T> el: this) {
-            if (el.getValue().equals(element)) return index;
+        for (T el: this) {
+            if (el.equals(element)) return index;
 
             index++;
         }
@@ -147,13 +147,12 @@ public class LinkedList<T> implements Iterable<ListNode<T>> {
         if (index >= length) return null;
 
         int i = 0;
-        for (ListNode<T> el: this) {
-            if (i == index) return el;
-
-            i++;
+        ListNode<T> currentNode = head;
+        while (currentNode != null && i < index) {
+            currentNode = currentNode.next;
         }
 
-        return null;
+        return currentNode;
     }
 
     public ListNode<T> getAt(int index) {

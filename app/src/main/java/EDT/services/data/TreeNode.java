@@ -37,7 +37,7 @@ public abstract class TreeNode extends Node<String> {
     public void forEachChild(ILinkedHelper<TreeNode> func) {
         if (children == null) return;
 
-        children.forEach(treeNodeListNode -> func.handle(treeNodeListNode.getValue()));
+        children.forEach(func::handle);
     }
 
     public String toString(int idx) {
@@ -45,7 +45,7 @@ public abstract class TreeNode extends Node<String> {
 
         StringBuilder data = new StringBuilder();
         children.forEach(treeNodeListNode -> {
-            data.append("\t".repeat(idx)).append(treeNodeListNode.getValue().toString(idx + 1)).append("\n");
+            data.append("\t".repeat(idx)).append(treeNodeListNode.toString(idx + 1)).append("\n");
         });
 
         return getValue() + "\n" + data;

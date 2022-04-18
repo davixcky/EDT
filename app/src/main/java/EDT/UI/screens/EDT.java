@@ -273,8 +273,8 @@ public class EDT {
 
                 System.out.println();
                 System.out.println("Nodos encontrados");
-                for (ListNode<TreeNode> node: nodesSearch) {
-                    System.out.println(node.getValue().getValue());
+                for (TreeNode node: nodesSearch) {
+                    System.out.println(node.getValue());
                 }
             }
         });
@@ -589,8 +589,7 @@ public class EDT {
 
         data.append("3. Nodos con un solo entregable\n");
         int i = 0;
-        for (ListNode<TreeNode> listNode : nodes) {
-            TreeNode node = listNode.getValue();
+        for (TreeNode node : nodes) {
             data.append(String.format("\t%d. \"%s\" (hijo de \"%s\")\n", i++, node.getValue(), node.getParentValue()));
         }
         data.append(String.format("---Total---   %d elements\n\n", nodes.size()));
