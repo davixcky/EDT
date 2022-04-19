@@ -1,23 +1,18 @@
-package EDT.UI.screens;
+package EDT.UI.screens.EDT;
 
+import EDT.UI.Utils;
 import EDT.services.data.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.file.Files;
 
 public class EDT {
@@ -33,6 +28,7 @@ public class EDT {
     private TextArea textArea;
     private ButtonGroup traversalMethods;
     private String currentTraversalType = null;
+    private EDTController controller;
 
     private JLabel Error;
     private JPanel edtPane;
@@ -104,6 +100,8 @@ public class EDT {
         leftEDTPane();
         graphicalTree();
         initMenu();
+
+        controller = new EDTController(fileChooser, dataTree);
     }
 
     public void graphicalTree() {
@@ -112,21 +110,6 @@ public class EDT {
         jScrollPane1.setAutoscrolls(true);
         jScrollPane1.setPreferredSize(new Dimension(300, 600));
         previewTree.setPreferredSize(new Dimension(300, 600));
-    }
-
-
-    public static void setPopupComponent(JComboBox<?> combo, Component comp, int widthIncr, int heightIncr) {
-        final ComboPopup popup = (ComboPopup) combo.getUI().getAccessibleChild(combo, 0);
-        if (popup instanceof Container) {
-            final Container c = (Container) popup;
-            c.removeAll();
-            c.setLayout(new GridLayout(1, 1));
-            c.add(comp);
-            final Dimension size = comp.getPreferredSize();
-            size.width += widthIncr;
-            size.height += heightIncr;
-            c.setPreferredSize(size);
-        }
     }
 
     private void initMenu() {
@@ -155,7 +138,7 @@ public class EDT {
         textArea = new TextArea();
         textArea.setEditable(false);
 
-        setPopupComponent(parentValuesComboBox, tree, 400, 200);
+        Utils.setPopupComponent(parentValuesComboBox, tree, 400, 200);
 
         addNodeBtn = new JButton();
         nodeType = new JComboBox<>();
@@ -215,7 +198,7 @@ public class EDT {
                 }, parent);
 
                 if (findParent == null) {
-                    showMessage("Nodo no existe. Intente nuevamente");
+                    Utils.showMessage("Nodo no existe. Intente nuevamente");
                     return;
                 }
 
@@ -299,7 +282,7 @@ public class EDT {
         generate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reportsHandler();
+                controller.generateFullReport();
             }
         });
 
@@ -432,12 +415,12 @@ public class EDT {
         try {
             isNodeInserted = dataTree.insert(parentValue, currentValue, literalType);
         } catch (Exception e) {
-            showMessage(e.getMessage());
+            Utils.showMessage(e);
             return;
         }
 
         if (!isNodeInserted) {
-            showMessage(String.format("The package \"%s\" already contains \"%s\"", parentValue, currentValue));
+            Utils.showMessage(String.format("The package \"%s\" already contains \"%s\"", parentValue, currentValue));
             return;
         }
 
@@ -477,7 +460,7 @@ public class EDT {
             String fileContent = Files.readString(fileChooser.getSelectedFile().toPath());
             node.setFileContent(fileContent);
         } catch (Exception e) {
-            showMessage(e.getMessage());
+            Utils.showMessage(e);
         }
 
     }
@@ -541,71 +524,11 @@ public class EDT {
         try {
             dataTree.toFile(fileChooser.getSelectedFile());
         } catch (Exception e) {
-            showMessage(e.getMessage());
+            Utils.showMessage(e);
             return;
         }
 
-        showMessage("Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
-    }
-
-    private void reportsHandler() {
-        fileChooser.setSelectedFile(new File(FileSystemView.getFileSystemView().getDefaultDirectory(), dataTree.getTitle() + "_report.txt"));
-        while (fileChooser.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
-        }
-
-        StringBuilder data = new StringBuilder();
-        data.append(String.format("Reporte para [%s]:\n\n", dataTree.getTitle()));
-
-        data.append("1. Numero de elementos (segun tipo)\n");
-        data.append(String.format("\t# Paquetes       = %d\n", dataTree.getTotalPackagesNode()));
-        data.append(String.format("\t# Entregables    = %d\n", dataTree.getTotalDeliverableNode()));
-        data.append(String.format("\t---------- TOTAL = %d\n\n", dataTree.getSize()));
-
-        data.append("2. Profundidad maxima\n");
-        data.append(String.format("\t# Profundidad       = %d\n\n", dataTree.depth()));
-
-        // Calculates nodes with a single deliverable node
-        LinkedList<TreeNode> nodes = new LinkedList<>();
-        final int[] counter = {0};
-        dataTree.forEachNode(new ILinkedHelper<TreeNode>() {
-            @Override
-            public void handle(TreeNode node) {
-                counter[0] = 0;
-                node.forEachChild(new ILinkedHelper<TreeNode>() {
-                    @Override
-                    public void handle(TreeNode child) {
-                        if (NAryTree.isNotPackageInstance(child)) {
-                            counter[0] += 1;
-                        }
-                    }
-                });
-
-                if (counter[0] == 1) {
-                    nodes.insert(node);
-                }
-            }
-        });
-
-
-        data.append("3. Nodos con un solo entregable\n");
-        int i = 0;
-        for (TreeNode node : nodes) {
-            data.append(String.format("\t%d. \"%s\" (hijo de \"%s\")\n", i++, node.getValue(), node.getParentValue()));
-        }
-        data.append(String.format("---Total---   %d elements\n\n", nodes.size()));
-
-        try {
-            FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile());
-            fileWriter.write(data.toString());
-            fileWriter.close();
-        } catch (Exception e) {
-            showMessage(e.getMessage());
-        }
-
-    }
-
-    private void showMessage(String message) {
-        JOptionPane.showMessageDialog(mainContainer, message);
+        Utils.showMessage("Project exported correctly as " + fileChooser.getSelectedFile().getAbsolutePath());
     }
 
     public Container getMainContainer() {
