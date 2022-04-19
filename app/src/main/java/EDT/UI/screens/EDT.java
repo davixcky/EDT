@@ -49,6 +49,7 @@ public class EDT {
     private JLabel noteLabel;
     private JScrollPane jScrollPane1;
     private JTabbedPane mainPane;
+    private DeliverableForum forum;
 
     private boolean ignoreCaseSearch, equalState;
 
@@ -190,7 +191,7 @@ public class EDT {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (mainPane.getTabCount() == 1) {
-                    DeliverableForum forum = new DeliverableForum(dataTree);
+                    forum = new DeliverableForum(dataTree);
                     mainPane.add(forum, "Schedule");
                     mainPane.setSelectedComponent(forum);
                 } else {
@@ -549,7 +550,7 @@ public class EDT {
         } catch (Exception e) {
             showMessage(e.getMessage());
         }
-
+        forum.updateTree(dataTree);
     }
 
     private void updateTraversalArea() {

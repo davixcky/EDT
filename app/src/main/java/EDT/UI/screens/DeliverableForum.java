@@ -6,7 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class DeliverableForum extends JPanel {
     private Color background = new Color(95, 100, 103);
@@ -16,10 +18,14 @@ public class DeliverableForum extends JPanel {
     private JLabel deliverLabel;
     private JLabel costLabel;
     private JLabel dependencyLabel;
+    private JLabel dateLabel;
     private JPanel durPane;
     private JPanel deliverPane;
     private JPanel costPane;
     private JPanel dependencyPane;
+    private JPanel datePane;
+    private JTextField dateField;
+
     private JTextField durField;
     private JTextField costField;
     private JTextField dependencyField;
@@ -29,18 +35,24 @@ public class DeliverableForum extends JPanel {
 
     DeliverableForum(NAryTree t) {
         this.tree = t;
+        this.setBackground(background);
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         init();
         comboBoxItems();
         fillPane(deliverPane, deliverLabel, deliverables);
         fillPane(costPane, costLabel, costField);
         fillPane(dependencyPane, dependencyLabel, dependencyField);
+        fillPane(datePane, dateLabel, dateField);
+        dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
         fillPane(durPane, durLabel, durField, timeUnits);
         this.add(addBtn);
         addBtn();
         this.add(Box.createVerticalStrut(300));
-        this.setBackground(background);
         coloring(this);
+    }
+    public void updateTree(NAryTree newTree){
+        this.tree = newTree;
+        this.revalidate();
     }
 
     public void addBtn() {
@@ -50,10 +62,12 @@ public class DeliverableForum extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean check = true;
+                Date date = null;
                 try {
                     Float.parseFloat(durField.getText());
                     Double.parseDouble(costField.getText());
                     Integer.parseInt(dependencyField.getText());
+                    date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
                 } catch (Exception ex) {
                     check = false;
                 }
@@ -61,8 +75,14 @@ public class DeliverableForum extends JPanel {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
                     int dependency = Integer.parseInt(dependencyField.getText());
-                    Date date = new Date();
-                    //GraphNode node = new GraphNode( );
+
+                    try {
+                        date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
+                    } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    GraphNode node = new GraphNode((TreeNode) deliverables.getSelectedItem(), cost, dur, dependency, date);
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
@@ -89,7 +109,6 @@ public class DeliverableForum extends JPanel {
         pane.add(label);
         pane.add(field);
         pane.add(combo);
-        combo.addItem("Hours");
         combo.addItem("Days");
         combo.addItem("Months");
         combo.addItem("Years");
@@ -145,6 +164,9 @@ public class DeliverableForum extends JPanel {
         dependencyPane = new JPanel();
         addBtn = new JButton("Add to schedule");
         timeUnits = new JComboBox<>();
+        dateField = new JTextField();
+        dateLabel = new JLabel("Starting date: ");
+        datePane = new JPanel();
     }
 
     public void comboBoxItems() {
