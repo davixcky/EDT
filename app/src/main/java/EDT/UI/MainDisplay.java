@@ -1,6 +1,7 @@
 package EDT.UI;
 
 import EDT.UI.screens.EDT;
+import org.w3c.dom.css.RGBColor;
 
 import javax.swing.*;
 import java.awt.*;

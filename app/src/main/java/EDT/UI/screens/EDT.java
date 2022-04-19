@@ -3,13 +3,17 @@ package EDT.UI.screens;
 import EDT.services.data.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -53,9 +57,10 @@ public class EDT {
     private JComboBox<String> nodeType;
     private JTextField nodeInputValue;
     private String currentParentValue = "EDT";
+    private Color background = new Color(95, 100, 103);
+    private Color foreground = new Color(230, 230, 230);
 
     public EDT(String edtTitle) {
-
         dataTree = new NAryTree();
         ignoreCaseSearch = equalState = false;
 
@@ -104,6 +109,46 @@ public class EDT {
         leftEDTPane();
         graphicalTree();
         initMenu();
+        look();
+
+    }
+
+    public void look() {
+        mainContainer.setBackground(background);
+        coloring(mainPane);
+        mainPane.setBorder(null);
+
+        edtLeftPane.setBackground(background);
+        coloring(edtLeftPane);
+        coloring(edtLeftPane1);
+        coloring(edtLeftPane2);
+        coloring(edtLeftPane3);
+        coloring(previewTree);
+        coloring(textArea);
+        coloring(tree);
+        DefaultTreeCellRenderer render = new DefaultTreeCellRenderer();
+        render.setBackgroundNonSelectionColor(background);
+        render.setTextNonSelectionColor(foreground);
+        previewTree.setCellRenderer(render);
+        tree.setCellRenderer(render);
+
+   }
+
+    public void coloring(JPanel pane) {
+        for (Component c : pane.getComponents()
+        ) {
+            if (c instanceof JComponent) {
+                ((JComponent) c).setOpaque(false);
+                    coloring(c);
+            }
+        }
+    }
+
+    public void coloring(Component component) {
+
+        component.setForeground(foreground);
+        component.setBackground(background);
+
     }
 
     public void graphicalTree() {
@@ -135,11 +180,34 @@ public class EDT {
         initFileSubMenu();
         initReportsSubMenu();
         initActionsSubMenu();
+        initSchedule();
+    }
+
+    public void initSchedule() {
+        JMenu deliverablesMenu = new JMenu("Schedule");
+        JMenuItem details = new JMenuItem("Create Schedule");
+        details.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (mainPane.getTabCount() == 1) {
+                    DeliverableForum forum = new DeliverableForum(dataTree);
+                    mainPane.add(forum, "Schedule");
+                    mainPane.setSelectedComponent(forum);
+                } else {
+                    mainPane.setSelectedIndex(1);
+                }
+
+
+            }
+        });
+        deliverablesMenu.add(details);
+        mainMenuBar.add(deliverablesMenu);
     }
 
     public void initiate() {
         parentValuesComboBox = new JComboBox<>();
         parentValuesComboBox.addItem(dataTree.getTitle());
+        UIManager.put("TabbedPane.selected",background);
         mainPane = new JTabbedPane();
         edtPane = new JPanel();
         nodeInputValue = new JTextField();
@@ -273,7 +341,7 @@ public class EDT {
 
                 System.out.println();
                 System.out.println("Nodos encontrados");
-                for (ListNode<TreeNode> node: nodesSearch) {
+                for (ListNode<TreeNode> node : nodesSearch) {
                     System.out.println(node.getValue().getValue());
                 }
             }
@@ -315,7 +383,7 @@ public class EDT {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (currentTraversalType != null &&currentTraversalType.equals("Preorder")) {
+                if (currentTraversalType != null && currentTraversalType.equals("Preorder")) {
                     traversalMethods.clearSelection();
                     currentTraversalType = null;
                 } else {
