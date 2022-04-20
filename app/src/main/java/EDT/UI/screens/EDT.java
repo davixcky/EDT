@@ -133,14 +133,14 @@ public class EDT {
         previewTree.setCellRenderer(render);
         tree.setCellRenderer(render);
 
-   }
+    }
 
     public void coloring(JPanel pane) {
         for (Component c : pane.getComponents()
         ) {
             if (c instanceof JComponent) {
                 ((JComponent) c).setOpaque(false);
-                    coloring(c);
+                coloring(c);
             }
         }
     }
@@ -190,15 +190,21 @@ public class EDT {
         details.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (mainPane.getTabCount() == 1) {
+                LinkedList<TreeNode> nodes = dataTree.filter(new ILinkedIFilter<TreeNode>() {
+                    @Override
+                    public boolean isValid(TreeNode value) {
+                        return NAryTree.isNotPackageInstance(value);
+                    }
+                });
+                if (nodes.size()==0) {
+                    JOptionPane.showMessageDialog(null,"There aren't any deliverables in the tree","Warning",JOptionPane.ERROR_MESSAGE);
+                } else if (mainPane.getTabCount() == 1) {
                     forum = new DeliverableForum(dataTree);
                     mainPane.add(forum, "Schedule");
                     mainPane.setSelectedComponent(forum);
                 } else {
                     mainPane.setSelectedIndex(1);
                 }
-
-
             }
         });
         deliverablesMenu.add(details);
@@ -208,7 +214,7 @@ public class EDT {
     public void initiate() {
         parentValuesComboBox = new JComboBox<>();
         parentValuesComboBox.addItem(dataTree.getTitle());
-        UIManager.put("TabbedPane.selected",background);
+        UIManager.put("TabbedPane.selected", background);
         mainPane = new JTabbedPane();
         edtPane = new JPanel();
         nodeInputValue = new JTextField();
@@ -550,7 +556,8 @@ public class EDT {
         } catch (Exception e) {
             showMessage(e.getMessage());
         }
-        forum.updateTree(dataTree);
+        if(forum != null)
+            forum.updateTree(dataTree);
     }
 
     private void updateTraversalArea() {

@@ -53,6 +53,8 @@ public class DeliverableForum extends JPanel {
     public void updateTree(NAryTree newTree){
         this.tree = newTree;
         this.revalidate();
+        deliverables.removeAllItems();
+        comboBoxItems();
     }
 
     public void addBtn() {
