@@ -7,7 +7,7 @@ import EDT.graphics.DisplayController;
 import EDT.input.KeyManager;
 import EDT.input.MouseManager;
 import EDT.states.State;
-import EDT.states.main.MainState;
+import EDT.states.home.HomeState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,13 +44,13 @@ public class App implements Runnable, DisplayController {
         changeBackground("/backgrounds/main.jpg");
         initStates();
 
-        State.goTo(MainState.STATE_NAME);
+        State.goTo(HomeState.STATE_NAME);
 
         display.start();
     }
 
     private void initStates() {
-        new MainState(new Handler(this));
+        new HomeState(new Handler(this));
     }
 
     public synchronized void start() {

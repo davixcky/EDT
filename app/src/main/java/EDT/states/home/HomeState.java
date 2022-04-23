@@ -1,4 +1,4 @@
-package EDT.states.main;
+package EDT.states.home;
 
 import EDT.app.Handler;
 import EDT.ui.UIButton;
@@ -10,13 +10,13 @@ import EDT.states.State;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class MainState extends State {
+public class HomeState extends State {
 
     private UIButton profileBtn;
 
-    public static final String STATE_NAME = "MAIN_STATE";
+    public static final String STATE_NAME = "HOME_STATE";
 
-    public MainState(Handler handler) {
+    public HomeState(Handler handler) {
         super(STATE_NAME, handler, "Home");
     }
 
