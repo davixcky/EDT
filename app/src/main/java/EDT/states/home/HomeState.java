@@ -6,13 +6,14 @@ import EDT.ui.UIObject;
 import EDT.gfx.Assets;
 import EDT.gfx.ContentLoader;
 import EDT.states.State;
+import org.checkerframework.checker.guieffect.qual.UI;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class HomeState extends State {
 
-    private UIButton profileBtn;
+    private UIButton profileBtn, edtScreenBtn;
 
     public static final String STATE_NAME = "HOME_STATE";
 
@@ -29,7 +30,11 @@ public class HomeState extends State {
             System.out.println("example");
         });
 
-        uiManager.addObjects(profileBtn);
+        edtScreenBtn = new UIButton(this, () -> {
+            System.out.println("test");
+        });
+
+        uiManager.addObjects(profileBtn, edtScreenBtn);
 
         resizeComponents();
     }
