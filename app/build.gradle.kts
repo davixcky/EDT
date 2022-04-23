@@ -34,5 +34,5 @@ testing {
 
 application {
     // Define the main class for the application.
-    mainClass.set("EDT.App")
+    mainClass.set("EDT.Launcher")
 }

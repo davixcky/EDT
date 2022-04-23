@@ -1,4 +1,4 @@
-package EDT;
+package EDT.app;
 
 import EDT.gfx.Assets;
 import EDT.gfx.ContentLoader;
@@ -98,9 +98,9 @@ public class App implements Runnable, DisplayController {
     }
 
     private void render() {
-        BufferStrategy bs = display.getGameCanvas().getBufferStrategy();
+        BufferStrategy bs = display.getMainCanvas().getBufferStrategy();
         if (bs == null) {
-            display.getGameCanvas().createBufferStrategy(3);
+            display.getMainCanvas().createBufferStrategy(3);
             return;
         }
 
