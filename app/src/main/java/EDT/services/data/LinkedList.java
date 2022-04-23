@@ -1,5 +1,6 @@
 package EDT.services.data;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 public class LinkedList<T> implements Iterable<T> {
@@ -9,6 +10,15 @@ public class LinkedList<T> implements Iterable<T> {
     public LinkedList() {
         head = tail = null;
         length = 0;
+    }
+
+    @SafeVarargs
+    public LinkedList(T ...elements) {
+        this();
+
+        for (T element : elements) {
+            insert(element);
+        }
     }
 
     public LinkedList<T> filter(ILinkedIFilter<T> filter) {
@@ -35,9 +45,24 @@ public class LinkedList<T> implements Iterable<T> {
         tail = newNode;
     }
 
+    public void add(T value) {
+        insert(value);
+    }
+
+    public void clear() {
+        reset();
+    }
+
     public void reset() {
         head = tail = null;
         length = 0;
+    }
+
+    public void addAll(Collection<? extends T> c) {
+        clear();
+        for (T el: c) {
+            insert(el);
+        }
     }
 
     @Override
@@ -100,6 +125,40 @@ public class LinkedList<T> implements Iterable<T> {
         current.setValue(newValue);
     }
 
+    public T get(int index) {
+        ListNode<T> node = getNode(index);
+        if (node == null) return null;
+
+        return node.getValue();
+    }
+
+    public void add(int index, T value) {
+        ListNode<T> node = getNode(index);
+        if (node == null) {
+            insert(value);
+            return;
+        }
+
+        node.setValue(value);
+    }
+
+    public boolean contains(Object o) {
+        return indexOfObject(o) != -1;
+    }
+
+    public int indexOfObject(Object o) {
+        int index = 0;
+        for (T node: this) {
+            if (node.equals(o)) {
+                return index;
+            }
+
+            index++;
+        }
+
+        return -1;
+    }
+
     public int indexOf(T element) {
         int index = 0;
 
@@ -146,14 +205,16 @@ public class LinkedList<T> implements Iterable<T> {
     private ListNode<T> getNode(int index) {
         if (index >= length) return null;
 
+        ListNode<T> current = head;
         int i = 0;
-        ListNode<T> currentNode = head;
-        while (currentNode != null && i < index) {
-            currentNode = currentNode.next;
+        while (i < index) {
+            i++;
+            current = current.next;
         }
 
-        return currentNode;
+        return current;
     }
+
 
     public ListNode<T> getAt(int index) {
         if (index >= length) return null;
