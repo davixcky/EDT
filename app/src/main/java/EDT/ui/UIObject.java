@@ -18,13 +18,16 @@ public abstract class UIObject {
 	protected float distanceX, distanceY;
 	protected boolean movement = false;
 
-	public UIObject(State parent, float x, float y, int width, int height){
+	public UIObject(float x, float y, int width, int height){
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.parent = parent;
 		bounds = new Rectangle((int) x, (int) y, width, height);
+	}
+
+	public void registerParent(State parent) {
+		this.parent = parent;
 	}
 	
 	public abstract void update();
@@ -76,8 +79,6 @@ public abstract class UIObject {
 	}
 
 	public static Dimension drawString(Graphics g, String text, int xPos, int yPos, boolean center, Color c, Font font){
-		Dimension size = new Dimension();
-
 		g.setColor(c);
 		g.setFont(font);
 		int x = xPos;

@@ -23,7 +23,7 @@ public abstract class State {
         this.handler = handler;
 
         currentDimension = handler.boardDimensions();
-        uiManager = new UIManager();
+        uiManager = new UIManager(this);
         statesRouting.put(key, this);
         this.navigationTitle = navigationTitle;
 

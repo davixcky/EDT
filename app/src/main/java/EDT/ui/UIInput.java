@@ -1,7 +1,5 @@
 package EDT.ui;
 
-import EDT.states.State;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -13,8 +11,8 @@ public class UIInput extends UIObject {
     private ActionListener listener;
     private int minChar, maxChar;
 
-    public UIInput(State parent, float x, float y) {
-        super(parent, x, y, UIButton.btnImage.getWidth(), UIButton.btnImage.getHeight());
+    public UIInput(float x, float y) {
+        super(x, y, UIButton.btnImage.getWidth(), UIButton.btnImage.getHeight());
 
         enterPressed = false;
         text = new StringBuilder();
@@ -23,8 +21,8 @@ public class UIInput extends UIObject {
         maxChar = 10;
     }
 
-    public UIInput(State parent) {
-        this(parent, 0, 0);
+    public UIInput() {
+        this(0, 0);
     }
 
     @Override

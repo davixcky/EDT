@@ -1,7 +1,5 @@
 package EDT.ui.components;
 
-import EDT.states.State;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -11,8 +9,8 @@ public class UIBox extends UIBufferedObject {
     private final Color color;
     private final String text;
 
-    public UIBox(State parent, float x, float y, int width, int height, Color color, String text) {
-        super(parent, x, y, width, height);
+    public UIBox(float x, float y, int width, int height, Color color, String text) {
+        super(x, y, width, height);
 
         this.color = color;
         this.text = text;

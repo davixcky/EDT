@@ -3,7 +3,6 @@ package EDT.ui.components;
 import EDT.ui.UIObject;
 import EDT.gfx.Assets;
 import EDT.services.data.list.linkedList.LinkedList;
-import EDT.states.State;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -14,8 +13,8 @@ public class UIBoxList extends UIBufferedObject {
     private final LinkedList<Integer> boxes;
     private String title;
 
-    public UIBoxList(State parent, float x, float y, int width, int height) {
-        super(parent, x, y, width, height);
+    public UIBoxList(float x, float y, int width, int height) {
+        super(x, y, width, height);
 
         title = "";
         boxes = new LinkedList<>();

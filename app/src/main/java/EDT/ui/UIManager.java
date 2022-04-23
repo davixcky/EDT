@@ -1,6 +1,7 @@
 package EDT.ui;
 
 import EDT.services.data.list.linkedList.LinkedList;
+import EDT.states.State;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,8 +13,11 @@ public class UIManager {
 	private LinkedList<UIObject> objects;
 
 	private UIObject focusedElement = null;
+	private State parentState;
 
-	public UIManager(){
+	public UIManager(State parent){
+		parentState = parent;
+
 		objects = new LinkedList<UIObject>();
 	}
 	
@@ -52,9 +56,13 @@ public class UIManager {
 			o.onKeyPressed(e);
 	}
 	
-	public void addObjects(UIObject ...objects){
+	public void addObjects(UIObject ...uiObjects){
 		this.objects.clear();
-		this.objects.addAll(Arrays.asList(objects));
+
+		for (UIObject uiObject: uiObjects) {
+			uiObject.registerParent(parentState);
+			this.objects.add(uiObject);
+		}
 	}
 
 	public void addObject(UIObject object) {

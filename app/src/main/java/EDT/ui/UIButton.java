@@ -2,7 +2,6 @@ package EDT.ui;
 
 import EDT.gfx.Assets;
 import EDT.services.data.list.linkedList.LinkedList;
-import EDT.states.State;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -34,8 +33,8 @@ public class UIButton extends UIObject {
     private Dimension size;
     private BUTTON_TYPE currentType;
 
-    public UIButton(State parent, float x, float y, int width, int height, LinkedList<BufferedImage> images, ActionListener clicker) {
-        super(parent, x, y, width, height);
+    public UIButton(float x, float y, int width, int height, LinkedList<BufferedImage> images, ActionListener clicker) {
+        super(x, y, width, height);
         this.images = images;
         this.clicker = clicker;
         isCustomSize = true;
@@ -44,22 +43,26 @@ public class UIButton extends UIObject {
         currentType = BUTTON_TYPE.NONE;
     }
 
-    public UIButton(State parent, ActionListener clicker) {
-        this(parent, 0, 0, btnImage, clicker);
+    public UIButton(ActionListener clicker) {
+        this(0, 0, btnImage, clicker);
     }
 
-    public UIButton(State parent, BUTTON_TYPE buttonType, ActionListener clicker) {
-        this(parent, clicker);
+    public UIButton(BUTTON_TYPE buttonType, ActionListener clicker) {
+        this(clicker);
 
         currentType = buttonType;
     }
 
-    public UIButton(State parent, float x, float y, ActionListener clicker) {
-        this(parent, x, y, btnImage, clicker);
+    public UIButton(int squareSize, BufferedImage image, ActionListener clicker) {
+        this(0, 0, squareSize, squareSize, image, clicker);
     }
 
-    public UIButton(State parent, float x, float y, BufferedImage image, ActionListener clicker) {
-        this(parent, x, y, image.getWidth(), image.getHeight(), (LinkedList<BufferedImage>) null, clicker);
+    public UIButton(float x, float y, ActionListener clicker) {
+        this(x, y, btnImage, clicker);
+    }
+
+    public UIButton(float x, float y, BufferedImage image, ActionListener clicker) {
+        this(x, y, image.getWidth(), image.getHeight(), (LinkedList<BufferedImage>) null, clicker);
 
         images = new LinkedList<>();
         images.add(UIButton.btnHoverImage);
@@ -71,8 +74,8 @@ public class UIButton extends UIObject {
         this.clicker = clicker;
     }
 
-    public UIButton(State parent, float x, float y, int width, int height, BufferedImage loadImage, ActionListener clicker) {
-        this(parent, x, y, width, height, new LinkedList<>(loadImage, loadImage), clicker);
+    public UIButton(float x, float y, int width, int height, BufferedImage loadImage, ActionListener clicker) {
+        this(x, y, width, height, new LinkedList<>(loadImage, loadImage), clicker);
     }
 
     @Override

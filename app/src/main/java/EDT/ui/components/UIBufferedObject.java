@@ -1,7 +1,6 @@
 package EDT.ui.components;
 
 import EDT.ui.UIObject;
-import EDT.states.State;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,8 +10,8 @@ public abstract class UIBufferedObject extends UIObject {
     private BufferedImage bufferedObject;
     private Graphics2D g2;
 
-    public UIBufferedObject(State parent, float x, float y, int width, int height) {
-        super(parent, x, y, width, height);
+    public UIBufferedObject(float x, float y, int width, int height) {
+        super(x, y, width, height);
 
         bufferedObject = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2 = bufferedObject.createGraphics();
