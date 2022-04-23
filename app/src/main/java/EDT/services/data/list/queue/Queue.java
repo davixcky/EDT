@@ -1,4 +1,7 @@
-package EDT.services.data;
+package EDT.services.data.list.queue;
+
+import EDT.services.data.list.linkedList.LinkedList;
+import EDT.services.data.list.linkedList.ListNode;
 
 public class Queue<T> extends LinkedList<T> {
     public Queue() {
@@ -10,7 +13,7 @@ public class Queue<T> extends LinkedList<T> {
 
         length--;
         ListNode<T> tmp = head;
-        head = head.next;
+        head = head.getNext();
 
         return tmp.getValue();
     }

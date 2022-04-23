@@ -1,4 +1,4 @@
-package EDT.services.data;
+package EDT.services.data.tree;
 
 public class PackageTreeNode extends TreeNode {
     public PackageTreeNode(String value) {

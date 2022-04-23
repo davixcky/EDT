@@ -1,6 +1,8 @@
-package EDT.services.data;
+package EDT.services.data.list.linkedList;
 
-public class ListNode<T> extends Node<T>{
+import EDT.services.data.common.Node;
+
+public class ListNode<T> extends Node<T> {
     ListNode<T> next;
 
     public ListNode(T value) {

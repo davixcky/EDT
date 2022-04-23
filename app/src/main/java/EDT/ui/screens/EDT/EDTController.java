@@ -1,10 +1,10 @@
 package EDT.ui.screens.EDT;
 
 import EDT.ui.Utils;
-import EDT.services.data.ILinkedHelper;
-import EDT.services.data.LinkedList;
-import EDT.services.data.NAryTree;
-import EDT.services.data.TreeNode;
+import EDT.services.data.list.linkedList.ILinkedHelper;
+import EDT.services.data.list.linkedList.LinkedList;
+import EDT.services.data.tree.NAryTree;
+import EDT.services.data.tree.TreeNode;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;

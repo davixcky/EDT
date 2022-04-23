@@ -1,6 +1,10 @@
-package EDT.services.data;
+package EDT.services.data.tree;
 
 import EDT.exceptions.IllegalTreeNode;
+import EDT.services.data.list.linkedList.ILinkedHelper;
+import EDT.services.data.list.linkedList.ILinkedIFilter;
+import EDT.services.data.list.linkedList.LinkedList;
+import EDT.services.data.list.queue.Queue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -115,7 +119,7 @@ public class NAryTree {
                     if (isNotPackageInstance(newNode)) {
                         for (int i = 0; i < mapNames.size(); i++) {
                             LinkedList<String> currentMap = mapNames.getAt(i).getValue();
-                            if (currentMap.tail.getValue().equals(a.parentValue)) {
+                            if (currentMap.last().equals(a.getParentValue())) {
                                 currentMap.insert(a.getValue());
                                 lastIndex[0] = i;
                                 break;

@@ -1,4 +1,4 @@
-package EDT.services.data;
+package EDT.services.data.list.linkedList;
 
 public interface ILinkedHelper<T> {
     default void handle(T node) {

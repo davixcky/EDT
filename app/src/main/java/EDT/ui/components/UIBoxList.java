@@ -2,7 +2,7 @@ package EDT.ui.components;
 
 import EDT.ui.UIObject;
 import EDT.gfx.Assets;
-import EDT.services.data.LinkedList;
+import EDT.services.data.list.linkedList.LinkedList;
 import EDT.states.State;
 
 import java.awt.*;

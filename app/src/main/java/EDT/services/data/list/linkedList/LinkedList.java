@@ -1,4 +1,4 @@
-package EDT.services.data;
+package EDT.services.data.list.linkedList;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -240,6 +240,12 @@ public class LinkedList<T> implements Iterable<T> {
         }
 
         return current.getValue();
+    }
+
+    public T last() {
+        if (head == null) return null;
+
+        return tail.getValue();
     }
 
 }

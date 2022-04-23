@@ -1,7 +1,7 @@
 package EDT.input;
 
 import EDT.ui.UIManager;
-import EDT.services.data.LinkedList;
+import EDT.services.data.list.linkedList.LinkedList;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

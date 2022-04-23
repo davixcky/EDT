@@ -1,4 +1,4 @@
-package EDT.services.data;
+package EDT.services.data.tree;
 
 public class DeliverableTreeNode extends TreeNode {
     private String fileContent;

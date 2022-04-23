@@ -1,4 +1,8 @@
-package EDT.services.data;
+package EDT.services.data.tree;
+
+import EDT.services.data.list.linkedList.ILinkedHelper;
+import EDT.services.data.list.linkedList.LinkedList;
+import EDT.services.data.common.Node;
 
 public abstract class TreeNode extends Node<String> {
     private LinkedList<TreeNode> children;

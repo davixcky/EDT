@@ -1,7 +1,7 @@
 package EDT.gfx;
 
 
-import EDT.services.data.LinkedList;
+import EDT.services.data.list.linkedList.LinkedList;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

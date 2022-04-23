@@ -1,4 +1,4 @@
-package EDT.services.data;
+package EDT.services.data.common;
 
 public abstract class Node<T> {
     private T value;
