@@ -1,4 +1,4 @@
-package EDT.UI.components.wrapper.fileChooser;
+package EDT.ui.components.wrapper.fileChooser;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;

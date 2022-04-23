@@ -1,6 +1,6 @@
-package EDT.UI.screens.EDT;
+package EDT.ui.screens.EDT;
 
-import EDT.UI.Utils;
+import EDT.ui.Utils;
 import EDT.services.data.*;
 
 import javax.swing.*;

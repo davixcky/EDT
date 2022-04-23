@@ -1,4 +1,4 @@
-package EDT.UI.components;
+package EDT.ui.components;
 
 import EDT.states.State;
 

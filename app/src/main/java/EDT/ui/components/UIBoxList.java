@@ -1,6 +1,6 @@
-package EDT.UI.components;
+package EDT.ui.components;
 
-import EDT.UI.UIObject;
+import EDT.ui.UIObject;
 import EDT.gfx.Assets;
 import EDT.services.data.LinkedList;
 import EDT.states.State;

@@ -1,8 +1,8 @@
 package EDT.states.main;
 
 import EDT.app.Handler;
-import EDT.UI.UIButton;
-import EDT.UI.UIObject;
+import EDT.ui.UIButton;
+import EDT.ui.UIObject;
 import EDT.gfx.Assets;
 import EDT.gfx.ContentLoader;
 import EDT.states.State;

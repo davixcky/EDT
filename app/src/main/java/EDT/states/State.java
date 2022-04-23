@@ -2,7 +2,7 @@ package EDT.states;
 
 
 import EDT.app.Handler;
-import EDT.UI.UIManager;
+import EDT.ui.UIManager;
 
 import java.awt.*;
 import java.util.HashMap;

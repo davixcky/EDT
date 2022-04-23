@@ -1,9 +1,8 @@
-package EDT.UI;
+package EDT.ui;
 
 import EDT.gfx.Assets;
 import EDT.services.data.LinkedList;
 import EDT.states.State;
-import EDT.states.main.MainState;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

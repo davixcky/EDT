@@ -1,6 +1,6 @@
-package EDT.UI.components;
+package EDT.ui.components;
 
-import EDT.UI.UIObject;
+import EDT.ui.UIObject;
 import EDT.states.State;
 
 import java.awt.*;

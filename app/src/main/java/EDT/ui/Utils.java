@@ -1,4 +1,4 @@
-package EDT.UI;
+package EDT.ui;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.ComboPopup;

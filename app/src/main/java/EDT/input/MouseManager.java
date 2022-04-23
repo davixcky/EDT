@@ -2,7 +2,7 @@ package EDT.input;
 
 
 
-import EDT.UI.UIManager;
+import EDT.ui.UIManager;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
