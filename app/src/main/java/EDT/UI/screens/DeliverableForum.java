@@ -6,9 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class DeliverableForum extends JPanel {
     private Color background = new Color(95, 100, 103);
@@ -28,25 +27,38 @@ public class DeliverableForum extends JPanel {
 
     private JTextField durField;
     private JTextField costField;
-    private JTextField dependencyField;
+    private JComboBox<String> dependencyCombo;
     private JComboBox<String> deliverables;
     private JComboBox<String> timeUnits;
     private JButton addBtn;
+    private JButton dateBtn;
 
     DeliverableForum(NAryTree t) {
         this.tree = t;
         this.setBackground(background);
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         init();
-        comboBoxItems();
-        fillPane(deliverPane, deliverLabel, deliverables);
+        comboBoxItems(deliverables);
+        comboBoxItems(dependencyCombo);
+        dependencyCombo.removeItemAt(0);
+        deliverables.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange()== ItemEvent.SELECTED){
+                    dependencyCombo.removeAllItems();
+                    comboBoxItems(dependencyCombo);
+                    dependencyCombo.removeItem(deliverables.getSelectedItem());
+                }
+            }
+        });
         fillPane(costPane, costLabel, costField);
-        fillPane(dependencyPane, dependencyLabel, dependencyField);
-        fillPane(datePane, dateLabel, dateField);
-        dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
+        fillPane(deliverPane, deliverLabel, deliverables);
+        fillPane(dependencyPane, dependencyLabel, dependencyCombo);
         fillPane(durPane, durLabel, durField, timeUnits);
         this.add(addBtn);
-        addBtn();
+        btnsBehaviour();
+        fillPane(datePane, dateLabel, dateField, dateBtn);
+        dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
         this.add(Box.createVerticalStrut(300));
         coloring(this);
     }
@@ -54,41 +66,39 @@ public class DeliverableForum extends JPanel {
         this.tree = newTree;
         this.revalidate();
         deliverables.removeAllItems();
-        comboBoxItems();
+        comboBoxItems(deliverables);
     }
 
-    public void addBtn() {
+    public void btnsBehaviour() {
         addBtn.setFocusPainted(false);
         addBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
         addBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean check = true;
-                Date date = null;
+
                 try {
                     Float.parseFloat(durField.getText());
                     Double.parseDouble(costField.getText());
-                    Integer.parseInt(dependencyField.getText());
-                    date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
                 } catch (Exception ex) {
                     check = false;
                 }
                 if (check) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
-                    int dependency = Integer.parseInt(dependencyField.getText());
-
-                    try {
-                        date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
-                    } catch (ParseException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-                    GraphNode node = new GraphNode((TreeNode) deliverables.getSelectedItem(), cost, dur, dependency, date);
+                    GraphNode node = new GraphNode(tree.find((String)deliverables.getSelectedItem()), cost, dur,tree.find((String) dependencyCombo.getSelectedItem()));
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
 
+
+            }
+        });
+        dateBtn.setFocusPainted(false);
+        dateBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        dateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
             }
         });
@@ -117,6 +127,18 @@ public class DeliverableForum extends JPanel {
         combo.setPreferredSize(new Dimension(80, 20));
         field.setPreferredSize(new Dimension(100, 20));
         label.setPreferredSize(new Dimension(120, 30));
+        field.setAlignmentX(JTextField.CENTER_ALIGNMENT);
+        coloring(pane);
+    }
+    public void fillPane(JPanel pane, JLabel label, JTextField field, JButton button) {
+        this.add(pane);
+        pane.setLayout(new FlowLayout());
+        pane.add(label);
+        pane.add(field);
+        pane.add(button);
+        button.setPreferredSize(new Dimension(130, 15));
+        field.setPreferredSize(new Dimension(100, 20));
+        label.setPreferredSize(new Dimension(100, 30));
         field.setAlignmentX(JTextField.CENTER_ALIGNMENT);
         coloring(pane);
     }
@@ -152,7 +174,7 @@ public class DeliverableForum extends JPanel {
     }
 
     public void init() {
-        dependencyField = new JTextField();
+        dependencyCombo = new JComboBox<>();
         dependencyLabel = new JLabel("Dependency: ");
         costField = new JTextField();
         costLabel = new JLabel("Cost: ");
@@ -165,13 +187,14 @@ public class DeliverableForum extends JPanel {
         costPane = new JPanel();
         dependencyPane = new JPanel();
         addBtn = new JButton("Add to schedule");
+        dateBtn = new JButton("Create Schedule");
         timeUnits = new JComboBox<>();
         dateField = new JTextField();
         dateLabel = new JLabel("Starting date: ");
         datePane = new JPanel();
     }
 
-    public void comboBoxItems() {
+    public void comboBoxItems(JComboBox c) {
         LinkedList<TreeNode> nodes = tree.filter(new ILinkedIFilter<TreeNode>() {
             @Override
             public boolean isValid(TreeNode value) {
@@ -179,7 +202,7 @@ public class DeliverableForum extends JPanel {
             }
         });
         nodes.forEach(entregable -> {
-            deliverables.addItem(entregable.getValue().getValue());
+            c.addItem(entregable.getValue().getValue());
         });
     }
 }
