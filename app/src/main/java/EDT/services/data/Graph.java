@@ -22,7 +22,7 @@ private LinkedList<GraphNode> vertex = new LinkedList<>();
             return graphNode.getID();
         }else{
             System.out.println("already here");
-            if(checkNode.getDuration()!=0){
+            if(checkNode.getDuration()==0){
                 System.out.println("Modified");
                 checkNode.setCost(graphNode.getCost());
                 checkNode.setDuration(graphNode.getDuration());
