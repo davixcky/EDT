@@ -35,6 +35,6 @@ private LinkedList<GraphNode> vertex = new LinkedList<>();
     }
     public void print(){
         System.out.println(vertex.toString());
-
+        System.out.println(vertex.tail.getValue().getDependencies().head);
     }
 }

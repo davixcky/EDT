@@ -90,7 +90,7 @@ public class DeliverableForum extends JPanel {
                     double cost = Double.parseDouble(costField.getText());
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                     GraphNodeID id2 = graph.addNode(new GraphNode(tree.find((String) dependencyCombo.getSelectedItem()), 0, 0));
-                    graph.addDependency(id,id2);
+                    graph.addDependency(id2,id);
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
