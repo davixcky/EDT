@@ -45,7 +45,7 @@ public class DeliverableForum extends JPanel {
         deliverables.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange()== ItemEvent.SELECTED){
+                if (e.getStateChange() == ItemEvent.SELECTED) {
                     dependencyCombo.removeAllItems();
                     comboBoxItems(dependencyCombo);
                     dependencyCombo.removeItem(deliverables.getSelectedItem());
@@ -63,7 +63,8 @@ public class DeliverableForum extends JPanel {
         this.add(Box.createVerticalStrut(300));
         coloring(this);
     }
-    public void updateTree(NAryTree newTree){
+
+    public void updateTree(NAryTree newTree) {
         this.tree = newTree;
         this.revalidate();
         deliverables.removeAllItems();
@@ -87,8 +88,9 @@ public class DeliverableForum extends JPanel {
                 if (check) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
-                    GraphNode node = new GraphNode(tree.find((String)deliverables.getSelectedItem()), cost, dur);
-                    graph.addVertex(node);
+                    GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
+                    GraphNodeID id2 = graph.addNode(new GraphNode(tree.find((String) dependencyCombo.getSelectedItem()), 0, 0));
+                    graph.addDependency(id,id2);
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
@@ -101,7 +103,7 @@ public class DeliverableForum extends JPanel {
         dateBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                graph.print();
             }
         });
     }
@@ -132,6 +134,7 @@ public class DeliverableForum extends JPanel {
         field.setAlignmentX(JTextField.CENTER_ALIGNMENT);
         coloring(pane);
     }
+
     public void fillPane(JPanel pane, JLabel label, JTextField field, JButton button) {
         this.add(pane);
         pane.setLayout(new FlowLayout());
