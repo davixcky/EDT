@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 public class DeliverableForum extends JPanel {
+    private Graph graph;
     private Color background = new Color(95, 100, 103);
     private Color foreground = new Color(230, 230, 230);
     private NAryTree tree;
@@ -24,7 +25,6 @@ public class DeliverableForum extends JPanel {
     private JPanel dependencyPane;
     private JPanel datePane;
     private JTextField dateField;
-
     private JTextField durField;
     private JTextField costField;
     private JComboBox<String> dependencyCombo;
@@ -35,6 +35,7 @@ public class DeliverableForum extends JPanel {
 
     DeliverableForum(NAryTree t) {
         this.tree = t;
+        graph = new Graph(tree);
         this.setBackground(background);
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         init();
@@ -86,7 +87,8 @@ public class DeliverableForum extends JPanel {
                 if (check) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
-                    GraphNode node = new GraphNode(tree.find((String)deliverables.getSelectedItem()), cost, dur,tree.find((String) dependencyCombo.getSelectedItem()));
+                    GraphNode node = new GraphNode(tree.find((String)deliverables.getSelectedItem()), cost, dur);
+                    graph.addVertex(node);
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
