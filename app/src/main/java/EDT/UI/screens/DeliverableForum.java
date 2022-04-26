@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.StringReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -128,8 +130,16 @@ public class DeliverableForum extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
-                if (test != null)
+                try {
+                    Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
+                    datesCalc(date);
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if (test != null) {
                     System.out.println(test.getValue().getValue());
+                    System.out.println(test.getDate().toString());
+                }
                 System.out.println(graph.getTotalCost());
                 System.out.println(graph.getTotalDuration() + " Days");
             }
@@ -255,7 +265,7 @@ public class DeliverableForum extends JPanel {
     }
 
     public void datesCalc(Date date) {
-        GregorianCalendar c = new GregorianCalendar(date.getDay(),date.getMonth(), date.getYear());
+        GregorianCalendar c = new GregorianCalendar(date.getDay(), date.getMonth(), date.getYear());
         graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
             @Override
             public void accept(ListNode<GraphNode> graphNodeListNode) {
