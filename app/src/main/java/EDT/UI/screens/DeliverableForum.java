@@ -103,7 +103,9 @@ public class DeliverableForum extends JPanel {
         dateBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                graph.print();
+                GraphNode test = graph.getVertex((String)deliverables.getSelectedItem());
+                if(test!=null)
+                    System.out.println(test.getValue().getValue());
             }
         });
     }

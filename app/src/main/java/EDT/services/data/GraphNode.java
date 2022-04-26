@@ -3,7 +3,7 @@ package EDT.services.data;
 
 import java.util.Date;
 
-public class GraphNode extends Node {
+public class GraphNode extends Node<TreeNode> {
     private float duration;
     private double cost;
 

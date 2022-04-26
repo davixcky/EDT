@@ -34,7 +34,15 @@ private LinkedList<GraphNode> vertex = new LinkedList<>();
         source.getNode().getDependencies().insert(dependency.getNode());
     }
     public void print(){
-        System.out.println(vertex.toString());
-        System.out.println(vertex.tail.getValue().getDependencies().head);
+
+    }
+    public GraphNode getVertex(String deliverable){
+        GraphNode searchNode = vertex.find(new ILinkedHelper<GraphNode>() {
+            @Override
+            public boolean compare(GraphNode a, GraphNode b) {
+                return a.getValue().getValue().equals(b.getValue().getValue());
+            }
+        },new GraphNode(new DeliverableTreeNode(deliverable),0,0));
+        return  searchNode;
     }
 }
