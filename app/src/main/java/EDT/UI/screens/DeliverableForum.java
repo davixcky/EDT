@@ -8,6 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.function.Consumer;
+
 
 public class DeliverableForum extends JPanel {
     private Graph graph;
@@ -40,18 +46,7 @@ public class DeliverableForum extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         init();
         comboBoxItems(deliverables);
-        comboBoxItems(dependencyCombo);
-        dependencyCombo.removeItemAt(0);
-        deliverables.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    dependencyCombo.removeAllItems();
-                    comboBoxItems(dependencyCombo);
-                    dependencyCombo.removeItem(deliverables.getSelectedItem());
-                }
-            }
-        });
+        dependencyComboBehaviour();
         fillPane(costPane, costLabel, costField);
         fillPane(deliverPane, deliverLabel, deliverables);
         fillPane(dependencyPane, dependencyLabel, dependencyCombo);
@@ -62,6 +57,27 @@ public class DeliverableForum extends JPanel {
         dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
         this.add(Box.createVerticalStrut(300));
         coloring(this);
+    }
+
+    public void dependencyComboBehaviour() {
+        comboBoxItems(dependencyCombo);
+        dependencyCombo.removeItemAt(0);
+        dependencyCombo.addItem("--");
+        deliverables.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    fillDependencyCombo();
+                }
+            }
+        });
+    }
+
+    public void fillDependencyCombo() {
+        dependencyCombo.removeAllItems();
+        comboBoxItems(dependencyCombo);
+        dependencyCombo.addItem("--");
+        dependencyCombo.removeItem(deliverables.getSelectedItem());
     }
 
     public void updateTree(NAryTree newTree) {
@@ -85,12 +101,20 @@ public class DeliverableForum extends JPanel {
                 } catch (Exception ex) {
                     check = false;
                 }
-                if (check) {
+                String dependency = (String) dependencyCombo.getSelectedItem();
+
+                if (check && !dependency.equalsIgnoreCase("--")) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
+                    dur = durationProcessing(dur);
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                     GraphNodeID id2 = graph.addNode(new GraphNode(tree.find((String) dependencyCombo.getSelectedItem()), 0, 0));
-                    graph.addDependency(id2,id);
+                    graph.addDependency(id2, id);
+                } else if (dependency.equalsIgnoreCase("--")) {
+                    float dur = Float.parseFloat(durField.getText());
+                    double cost = Double.parseDouble(costField.getText());
+                    dur = durationProcessing(dur);
+                    GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                 }
@@ -103,9 +127,11 @@ public class DeliverableForum extends JPanel {
         dateBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GraphNode test = graph.getVertex((String)deliverables.getSelectedItem());
-                if(test!=null)
+                GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
+                if (test != null)
                     System.out.println(test.getValue().getValue());
+                System.out.println(graph.getTotalCost());
+                System.out.println(graph.getTotalDuration() + " Days");
             }
         });
     }
@@ -210,6 +236,32 @@ public class DeliverableForum extends JPanel {
         });
         nodes.forEach(entregable -> {
             c.addItem(entregable.getValue().getValue());
+        });
+    }
+
+    /**
+     * This method takes the input of durField and converts its units to days
+     */
+    public float durationProcessing(float dur) {
+        switch (timeUnits.getSelectedIndex()) {
+            case 1:
+                dur = dur * 30;
+                break;
+            case 2:
+                dur = dur * 12 * 30;
+                break;
+        }
+        return dur;
+    }
+
+    public void datesCalc(Date date) {
+        GregorianCalendar c = new GregorianCalendar(date.getDay(),date.getMonth(), date.getYear());
+        graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
+            @Override
+            public void accept(ListNode<GraphNode> graphNodeListNode) {
+                c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
+                graphNodeListNode.getValue().setDate(c.getTime());
+            }
         });
     }
 }

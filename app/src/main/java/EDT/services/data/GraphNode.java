@@ -6,6 +6,11 @@ import java.util.Date;
 public class GraphNode extends Node<TreeNode> {
     private float duration;
     private double cost;
+private Date date;
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     private GraphNodeID id;
     private LinkedList<GraphNode> dependencies;
