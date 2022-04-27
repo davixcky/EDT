@@ -2,13 +2,13 @@ package EDT.UI.screens;
 
 import EDT.services.data.*;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +40,7 @@ public class DeliverableForum extends JPanel {
     private JComboBox<String> timeUnits;
     private JButton addBtn;
     private JButton dateBtn;
+
 
     DeliverableForum(NAryTree t) {
         this.tree = t;
@@ -132,6 +133,7 @@ public class DeliverableForum extends JPanel {
                 GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
                 try {
                     Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
+                    System.out.println(date);
                     datesCalc(date);
                 } catch (ParseException ex) {
                     throw new RuntimeException(ex);
@@ -265,12 +267,13 @@ public class DeliverableForum extends JPanel {
     }
 
     public void datesCalc(Date date) {
-        GregorianCalendar c = new GregorianCalendar(date.getDay(), date.getMonth(), date.getYear());
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
         graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
             @Override
             public void accept(ListNode<GraphNode> graphNodeListNode) {
-                c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
                 graphNodeListNode.getValue().setDate(c.getTime());
+                c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
             }
         });
     }
