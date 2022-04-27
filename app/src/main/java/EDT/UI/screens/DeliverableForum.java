@@ -152,7 +152,7 @@ public class DeliverableForum extends JPanel {
                     System.out.println(graph.getTotalCost());
                     System.out.println(graph.getTotalDuration() + " Days");
                 } else {
-                    JOptionPane.showMessageDialog(null, "The date is not in the proper format");
+                    JOptionPane.showMessageDialog(null, "Something is wrong with the date");
                 }
             }
         });
