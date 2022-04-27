@@ -93,6 +93,7 @@ public class DeliverableForum extends JPanel {
     public void btnsBehaviour() {
         addBtn.setFocusPainted(false);
         addBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        addBtn.setPreferredSize(new Dimension(100,20));
         addBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,20 +131,24 @@ public class DeliverableForum extends JPanel {
         dateBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
+                boolean approved = true;
                 try {
                     Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
-                    System.out.println(date);
                     datesCalc(date);
                 } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
+                    approved = false;
                 }
-                if (test != null) {
-                    System.out.println(test.getValue().getValue());
-                    System.out.println(test.getDate().toString());
+                if (approved) {
+                    GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
+                    if (test != null) {
+                        System.out.println(test.getValue().getValue());
+                        System.out.println("Last date" + test.getDate().toString());
+                    }
+                    System.out.println(graph.getTotalCost());
+                    System.out.println(graph.getTotalDuration() + " Days");
+                }else{
+                    JOptionPane.showMessageDialog(null, "The date is not in the proper format");
                 }
-                System.out.println(graph.getTotalCost());
-                System.out.println(graph.getTotalDuration() + " Days");
             }
         });
     }
@@ -181,7 +186,7 @@ public class DeliverableForum extends JPanel {
         pane.add(label);
         pane.add(field);
         pane.add(button);
-        button.setPreferredSize(new Dimension(130, 15));
+        button.setPreferredSize(new Dimension(130, 20));
         field.setPreferredSize(new Dimension(100, 20));
         label.setPreferredSize(new Dimension(100, 30));
         field.setAlignmentX(JTextField.CENTER_ALIGNMENT);
