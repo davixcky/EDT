@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -93,7 +94,7 @@ public class DeliverableForum extends JPanel {
     public void btnsBehaviour() {
         addBtn.setFocusPainted(false);
         addBtn.setAlignmentX(JButton.CENTER_ALIGNMENT);
-        addBtn.setPreferredSize(new Dimension(100,20));
+        addBtn.setPreferredSize(new Dimension(100, 20));
         addBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -132,13 +133,17 @@ public class DeliverableForum extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean approved = true;
+
                 try {
                     Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
                     datesCalc(date);
-                } catch (ParseException ex) {
+                    if(!isdateValid(date)){
+                        throw new Exception();
+                    }
+                } catch (Exception ex) {
                     approved = false;
                 }
-                if (approved) {
+                 if (approved) {
                     GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
                     if (test != null) {
                         System.out.println(test.getValue().getValue());
@@ -146,7 +151,7 @@ public class DeliverableForum extends JPanel {
                     }
                     System.out.println(graph.getTotalCost());
                     System.out.println(graph.getTotalDuration() + " Days");
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(null, "The date is not in the proper format");
                 }
             }
@@ -269,6 +274,15 @@ public class DeliverableForum extends JPanel {
                 break;
         }
         return dur;
+    }
+
+    public boolean isdateValid(Date date) {
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+        if (c.getTime().before(new java.util.Date())) {
+            return false;
+        }
+        return true;
     }
 
     public void datesCalc(Date date) {
