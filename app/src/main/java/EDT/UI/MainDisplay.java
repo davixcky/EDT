@@ -1,7 +1,7 @@
 package EDT.UI;
 
 import EDT.UI.screens.EDT;
-import org.w3c.dom.css.RGBColor;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +11,7 @@ public class MainDisplay {
     private BorderLayout borderLayout;
 
     public MainDisplay(String title) {
+        FlatDarkLaf.setup();
         frame = new JFrame(title);
         borderLayout = new BorderLayout();
 
