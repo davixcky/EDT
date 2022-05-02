@@ -321,6 +321,11 @@ public class DeliverableForum extends JPanel {
             });
         }
     }
+    public void dateAssigner(GregorianCalendar c,GraphNode g){
+        if(g.getDependencies()!=null){
+            c.add(Calendar.DAY_OF_YEAR, (int) g.getDuration());
+        }
+    }
 
     /**
      * The following method returns true in the given GraphNode isn't in any of
