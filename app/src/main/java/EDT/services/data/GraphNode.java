@@ -1,20 +1,13 @@
 package EDT.services.data;
 
-
 import java.util.Date;
 
 public class GraphNode extends Node<TreeNode> {
+
     private float duration;
     private double cost;
-private Date date;
+    private Date date;
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     private GraphNodeID id;
     private LinkedList<GraphNode> dependencies;
@@ -24,6 +17,17 @@ private Date date;
         this.cost = c;
         this.duration = dur;
         dependencies = new LinkedList<>();
+
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public double getCost() {

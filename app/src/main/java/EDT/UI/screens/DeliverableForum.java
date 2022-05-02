@@ -2,7 +2,6 @@ package EDT.UI.screens;
 
 import EDT.services.data.*;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,9 +13,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.function.Consumer;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DeliverableForum extends JPanel {
+
     private Graph graph;
     private Color background = new Color(39, 39, 42);
     private Color foreground = new Color(230, 230, 230);
@@ -40,7 +41,8 @@ public class DeliverableForum extends JPanel {
     private JComboBox<String> timeUnits;
     private JButton addBtn;
     private JButton dateBtn;
-
+    private GraphNode start;
+    private boolean alreadyfirst = false;
 
     DeliverableForum(NAryTree t) {
         this.tree = t;
@@ -57,7 +59,7 @@ public class DeliverableForum extends JPanel {
         this.add(addBtn);
         this.add(status);
         status.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        status.setPreferredSize(new Dimension(100,28));
+        status.setPreferredSize(new Dimension(100, 28));
         btnsBehaviour();
         fillPane(datePane, dateLabel, dateField, dateBtn);
         dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
@@ -82,7 +84,9 @@ public class DeliverableForum extends JPanel {
     public void fillDependencyCombo() {
         dependencyCombo.removeAllItems();
         comboBoxItems(dependencyCombo);
-        dependencyCombo.addItem("--");
+        if (alreadyfirst == false) {
+            dependencyCombo.addItem("--");
+        }
         dependencyCombo.removeItem(deliverables.getSelectedItem());
     }
 
@@ -101,6 +105,7 @@ public class DeliverableForum extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean check = true;
+                boolean dependencyCheck = true;
 
                 try {
                     Float.parseFloat(durField.getText());
@@ -116,19 +121,30 @@ public class DeliverableForum extends JPanel {
                     dur = durationProcessing(dur);
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                     GraphNodeID id2 = graph.addNode(new GraphNode(tree.find((String) dependencyCombo.getSelectedItem()), 0, 0));
-                    graph.addDependency(id2, id);
-                    status.setText("Succesfully added");
-                } else if (dependency.equalsIgnoreCase("--")) {
+                    try {
+                        graph.addDependency(id2, id);
+                    } catch (Exception ex) {
+                        dependencyCheck = false;
+                    }
+                    if (dependencyCheck) {
+                        status.setText("Succesfully added");
+                    } else {
+                         status.setText("");
+                         JOptionPane.showMessageDialog(null, "The desired dependency already exists or generates a cycle", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } else if (check && dependency.equalsIgnoreCase("--")) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
                     dur = durationProcessing(dur);
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                     status.setText("Succesfully added");
+                    start = graph.getVertex((String) deliverables.getSelectedItem());
+                    alreadyfirst = true;
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
                     status.setText("");
                 }
-
 
             }
         });
@@ -142,13 +158,13 @@ public class DeliverableForum extends JPanel {
                 try {
                     Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateField.getText());
                     datesCalc(date);
-                    if(!isdateValid(date)){
+                    if (!isdateValid(date)) {
                         throw new Exception();
                     }
                 } catch (Exception ex) {
                     approved = false;
                 }
-                 if (approved) {
+                if (approved) {
                     GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
                     if (test != null) {
                         System.out.println(test.getValue().getValue());
@@ -215,8 +231,7 @@ public class DeliverableForum extends JPanel {
     }
 
     public void coloring(JPanel pane) {
-        for (Component c : pane.getComponents()
-        ) {
+        for (Component c : pane.getComponents()) {
             if (c instanceof JComponent) {
                 ((JComponent) c).setOpaque(false);
                 coloring(c);
@@ -295,6 +310,7 @@ public class DeliverableForum extends JPanel {
     public void datesCalc(Date date) {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
+
         graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
             @Override
             public void accept(ListNode<GraphNode> graphNodeListNode) {
@@ -303,4 +319,35 @@ public class DeliverableForum extends JPanel {
             }
         });
     }
+
+    /**
+     * The following method returns true in the given GraphNode isn't in any of
+     * the other's node dependency list
+     */
+    public boolean neverDependency(GraphNode objective) {
+
+        LinkedList<GraphNode> havedependency = graph.getVertexList().filter(new ILinkedIFilter<GraphNode>() {
+            @Override
+            public boolean isValid(GraphNode value) {
+                return (value.getDependencies() != null);
+            }
+        });
+        GraphNode searchNode = havedependency.find(new ILinkedHelper<GraphNode>() {
+            @Override
+            public boolean compare(GraphNode a, GraphNode b) {
+                return (a.getDependencies().find(new ILinkedHelper<GraphNode>() {
+                    @Override
+                    public boolean compare(GraphNode a, GraphNode b) {
+                        return a.getValue().getValue().equals(b.getValue().getValue());
+                    }
+                }, b) != null);
+
+            }
+        }, objective);
+        if (searchNode == null) {
+            return true;
+        }
+        return false;
+    }
+
 }
