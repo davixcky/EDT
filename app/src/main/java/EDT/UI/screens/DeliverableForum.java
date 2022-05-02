@@ -13,8 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DeliverableForum extends JPanel {
 
@@ -129,8 +127,8 @@ public class DeliverableForum extends JPanel {
                     if (dependencyCheck) {
                         status.setText("Succesfully added");
                     } else {
-                         status.setText("");
-                         JOptionPane.showMessageDialog(null, "The desired dependency already exists or generates a cycle", "Error", JOptionPane.ERROR_MESSAGE);
+                        status.setText("");
+                        JOptionPane.showMessageDialog(null, "The desired dependency already exists or generates a cycle", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
                 } else if (check && dependency.equalsIgnoreCase("--")) {
@@ -311,13 +309,17 @@ public class DeliverableForum extends JPanel {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
 
-        graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
-            @Override
-            public void accept(ListNode<GraphNode> graphNodeListNode) {
-                graphNodeListNode.getValue().setDate(c.getTime());
-                c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
-            }
-        });
+        if (start.getDependencies() != null) {
+            start.setDate(c.getTime());
+            c.add(Calendar.DAY_OF_YEAR, (int) start.getDuration());
+            start.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
+                @Override
+                public void accept(ListNode<GraphNode> graphNodeListNode) {
+                    graphNodeListNode.getValue().setDate(c.getTime());
+                    c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
+                }
+            });
+        }
     }
 
     /**

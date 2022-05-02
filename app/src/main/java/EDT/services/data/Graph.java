@@ -47,8 +47,8 @@ public class Graph {
 
     /**
      * This method adds the dependency to the LinkedList of dependencies of the
-     * source
-     *
+     * source<p>
+     * However, if doing so will result in a cycle or is redundant it throws an exception
      */
     public void addDependency(GraphNodeID source, GraphNodeID dependency) throws Exception {
         GraphNode checkNodeS = source.getNode().getDependencies().find(new ILinkedHelper<GraphNode>() {
