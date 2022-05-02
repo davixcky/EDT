@@ -11,6 +11,12 @@ public class MainDisplay {
     private BorderLayout borderLayout;
 
     public MainDisplay(String title) {
+        /***
+         * The line FlatDarLaf.setup(); comes from the flatlaf java library<p>
+         * It allows the library to take control of the swing component's appearence<p>
+         * link of their blog: https://www.formdev.com/flatlaf/
+         * @author FormDev Software
+         **/
         FlatDarkLaf.setup();
         frame = new JFrame(title);
         borderLayout = new BorderLayout();

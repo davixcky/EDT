@@ -26,6 +26,7 @@ public class DeliverableForum extends JPanel {
     private JLabel costLabel;
     private JLabel dependencyLabel;
     private JLabel dateLabel;
+    private JLabel status;
     private JPanel durPane;
     private JPanel deliverPane;
     private JPanel costPane;
@@ -54,10 +55,13 @@ public class DeliverableForum extends JPanel {
         fillPane(dependencyPane, dependencyLabel, dependencyCombo);
         fillPane(durPane, durLabel, durField, timeUnits);
         this.add(addBtn);
+        this.add(status);
+        status.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        status.setPreferredSize(new Dimension(100,28));
         btnsBehaviour();
         fillPane(datePane, dateLabel, dateField, dateBtn);
         dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
-        this.add(Box.createVerticalStrut(300));
+        this.add(Box.createVerticalStrut(290));
         coloring(this);
     }
 
@@ -113,13 +117,16 @@ public class DeliverableForum extends JPanel {
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
                     GraphNodeID id2 = graph.addNode(new GraphNode(tree.find((String) dependencyCombo.getSelectedItem()), 0, 0));
                     graph.addDependency(id2, id);
+                    status.setText("Succesfully added");
                 } else if (dependency.equalsIgnoreCase("--")) {
                     float dur = Float.parseFloat(durField.getText());
                     double cost = Double.parseDouble(costField.getText());
                     dur = durationProcessing(dur);
                     GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
+                    status.setText("Succesfully added");
                 } else {
                     JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
+                    status.setText("");
                 }
 
 
@@ -227,7 +234,7 @@ public class DeliverableForum extends JPanel {
     }
 
     public void init() {
-        UIManager.put("ComboBox.selectionBackground", foreground);
+        //UIManager.put("ComboBox.selectionBackground", foreground);
         dependencyCombo = new JComboBox<>();
         dependencyLabel = new JLabel("Dependency: ");
         costField = new JTextField();
@@ -246,6 +253,7 @@ public class DeliverableForum extends JPanel {
         dateField = new JTextField();
         dateLabel = new JLabel("Starting date: ");
         datePane = new JPanel();
+        status = new JLabel("");
     }
 
     public void comboBoxItems(JComboBox c) {
