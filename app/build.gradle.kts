@@ -17,6 +17,16 @@ repositories {
     mavenCentral()
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "EDT.App"
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree) // OR .map { zipTree(it) }
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:30.1.1-jre")
