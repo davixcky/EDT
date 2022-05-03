@@ -59,7 +59,7 @@ public class DeliverableForum extends JPanel {
         status.setPreferredSize(new Dimension(100, 28));
         btnsBehaviour();
         fillPane(datePane, dateLabel, dateField, dateBtn);
-        dateField.setToolTipText("Please type the starting date in the following format dd/MM/yyyy");
+        dateField.setToolTipText("Please type the starting date (From the following day or upper) in the following format dd/MM/yyyy");
         this.add(Box.createVerticalStrut(290));
         coloring(this);
     }
@@ -125,6 +125,8 @@ public class DeliverableForum extends JPanel {
                     }
                     if (dependencyCheck) {
                         status.setText("Succesfully added");
+                        costField.setText("");
+                        durField.setText("");
                     } else {
                         status.setText("");
                         JOptionPane.showMessageDialog(null, "The desired dependency already exists or generates a cycle", "Error", JOptionPane.ERROR_MESSAGE);
@@ -168,6 +170,7 @@ public class DeliverableForum extends JPanel {
                     approved = false;
                 }
                 if (approved && start != null) {
+                    status.setText("Schedule created successfully");
                     GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
                     if (test != null) {
                         System.out.println(test.getValue().getValue());
@@ -428,26 +431,48 @@ public class DeliverableForum extends JPanel {
         return true;
     }
 
+
     public void datesCalc(Date date) {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
 
         if (start.getDependencies() != null) {
             start.setDate(c.getTime());
-            c.add(Calendar.DAY_OF_YEAR, (int) start.getDuration());
-            start.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
+            dateAssigner(c,start);
+//            start.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
+//                @Override
+//                public void accept(ListNode<GraphNode> graphNodeListNode) {
+//                    graphNodeListNode.getValue().setDate(c.getTime());
+//                    c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
+//                }
+//            });
+            graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
                 @Override
                 public void accept(ListNode<GraphNode> graphNodeListNode) {
-                    graphNodeListNode.getValue().setDate(c.getTime());
-                    c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
+                    commonDates(graphNodeListNode.getValue());
                 }
             });
+
         }
     }
 
     public void dateAssigner(GregorianCalendar c, GraphNode g) {
         if (g.getDependencies() != null) {
+            g.setDate(c.getTime());
             c.add(Calendar.DAY_OF_YEAR, (int) g.getDuration());
+            dateAssigner(c,g.getDependencies().getAt(0).getValue());
+        }else{
+            g.setDate(c.getTime());
+        }
+    }
+    public void commonDates(GraphNode g){
+        if(g.getDependencies()!=null){
+            g.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
+                @Override
+                public void accept(ListNode<GraphNode> graphNodeListNode) {
+                    graphNodeListNode.getValue().setDate(g.getDependencies().getAt(0).getValue().getDate());
+                }
+            });
         }
     }
 
