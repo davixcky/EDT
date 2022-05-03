@@ -80,7 +80,8 @@ public abstract class TreeNode extends Node<String> {
     @Override
     public String toString() {
         return "TreeNode{" +
-                "children=" + children +
+                "value=" + getValue() +
+                ", children=" + children +
                 ", parentValue='" + parentValue + '\'' +
                 '}';
     }
