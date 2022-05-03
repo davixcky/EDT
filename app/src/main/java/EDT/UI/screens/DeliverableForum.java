@@ -167,18 +167,26 @@ public class DeliverableForum extends JPanel {
                         throw new Exception();
                     }
                 } catch (Exception ex) {
+                    System.out.println(ex);
                     approved = false;
                 }
                 if (approved && start != null) {
                     status.setText("Schedule created successfully");
-                    GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
-                    if (test != null) {
-                        System.out.println(test.getValue().getValue());
-                        System.out.println("Last date " + test.getDate().toString());
-                    }
-                    System.out.println(graph.getTotalCost());
-                    System.out.println(graph.getTotalDuration() + " Days");
-                } else if (start != null) {
+//                    GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
+//                    if (test != null) {
+//                        System.out.println(test.getValue().getValue());
+//                        System.out.println("Last date " + test.getDate().toString());
+//                    }
+//                    System.out.println(graph.getTotalCost());
+//                    System.out.println(graph.getTotalDuration() + " Days");
+                    graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
+                        @Override
+                        public void accept(ListNode<GraphNode> graphNodeListNode) {
+                            System.out.println(graphNodeListNode.getValue().getValue().getValue());
+                            System.out.println(graphNodeListNode.getValue().getDate());
+                        }
+                    });
+                } else if (start == null) {
                     JOptionPane.showMessageDialog(null, "Something is wrong with the date", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Can't find an independent deliverable to start", "Error", JOptionPane.ERROR_MESSAGE);
@@ -322,7 +330,7 @@ public class DeliverableForum extends JPanel {
 
         if (start.getDependencies() != null) {
             start.setDate(c.getTime());
-            dateAssigner(c,start);
+            dateAssigner(c, start);
 //            start.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
 //                @Override
 //                public void accept(ListNode<GraphNode> graphNodeListNode) {
@@ -330,10 +338,12 @@ public class DeliverableForum extends JPanel {
 //                    c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
 //                }
 //            });
+            c.setTime(date);
             graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
                 @Override
                 public void accept(ListNode<GraphNode> graphNodeListNode) {
                     commonDates(graphNodeListNode.getValue());
+                    dateAssigner(c, graphNodeListNode.getValue());
                 }
             });
 
@@ -341,16 +351,17 @@ public class DeliverableForum extends JPanel {
     }
 
     public void dateAssigner(GregorianCalendar c, GraphNode g) {
-        if (g.getDependencies() != null) {
+        if (g.getDependencies().getAt(0) != null) {
             g.setDate(c.getTime());
             c.add(Calendar.DAY_OF_YEAR, (int) g.getDuration());
-            dateAssigner(c,g.getDependencies().getAt(0).getValue());
-        }else{
+            dateAssigner(c, g.getDependencies().getAt(0).getValue());
+        } else {
             g.setDate(c.getTime());
         }
     }
-    public void commonDates(GraphNode g){
-        if(g.getDependencies()!=null){
+
+    public void commonDates(GraphNode g) {
+        if (g.getDependencies() != null) {
             g.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
                 @Override
                 public void accept(ListNode<GraphNode> graphNodeListNode) {
