@@ -162,16 +162,18 @@ public class DeliverableForum extends JPanel {
                 } catch (Exception ex) {
                     approved = false;
                 }
-                if (approved) {
+                if (approved && start != null) {
                     GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
                     if (test != null) {
                         System.out.println(test.getValue().getValue());
-                        System.out.println("Last date" + test.getDate().toString());
+                        System.out.println("Last date " + test.getDate().toString());
                     }
                     System.out.println(graph.getTotalCost());
                     System.out.println(graph.getTotalDuration() + " Days");
-                } else {
+                } else if(start != null){
                     JOptionPane.showMessageDialog(null, "Something is wrong with the date");
+                }else{
+                    JOptionPane.showMessageDialog(null, "Can't find an independent deliverable to start");
                 }
             }
         });
