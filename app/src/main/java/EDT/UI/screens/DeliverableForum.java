@@ -25,6 +25,7 @@ public class DeliverableForum extends JPanel {
     private JLabel dependencyLabel;
     private JLabel dateLabel;
     private JLabel status;
+    private JLabel budgetLabel;
     private JPanel durPane;
     private JPanel deliverPane;
     private JPanel costPane;
@@ -55,13 +56,20 @@ public class DeliverableForum extends JPanel {
         fillPane(durPane, durLabel, durField, timeUnits);
         this.add(addBtn);
         this.add(status);
-        status.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        status.setPreferredSize(new Dimension(100, 28));
+        statuslabels();
         btnsBehaviour();
         fillPane(datePane, dateLabel, dateField, dateBtn);
         dateField.setToolTipText("Please type the starting date (From the following day or upper) in the following format dd/MM/yyyy");
-        this.add(Box.createVerticalStrut(290));
+        this.add(budgetLabel);
+        this.add(Box.createVerticalStrut(278));
         coloring(this);
+    }
+    public void statuslabels(){
+        status.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        status.setPreferredSize(new Dimension(100, 28));
+        budgetLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        budgetLabel.setPreferredSize(new Dimension(100, 28));
+        budgetLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
     }
 
     public void dependencyComboBehaviour() {
@@ -178,6 +186,7 @@ public class DeliverableForum extends JPanel {
                             System.out.println(graphNodeListNode.getValue().getDate());
                         }
                     });
+                    budgetLabel.setText("Total Budget: $"+graph.getTotalCost());
                     openGraphVisualizer();
                 } else if (start != null) {
                     JOptionPane.showMessageDialog(null, "Something is wrong with the date", "Error", JOptionPane.ERROR_MESSAGE);
@@ -285,7 +294,7 @@ public class DeliverableForum extends JPanel {
                 for (ListNode<GraphNode> dependency : vertex.getDependencies()) {
                     Point dPoint = vertexPoints.get(dependency.getValue());
 
-                    g.drawString("es dependencia", point.x + 25, point.y);
+                    g.drawString("is dependency", point.x + 25, point.y);
                     g.drawLine(point.x + 20, point.y + 20, dPoint.x + 20, dPoint.y + 20);
                 }
 
@@ -298,7 +307,9 @@ public class DeliverableForum extends JPanel {
                 g.fillOval(point.x, point.y, 40, 40);
                 g.setColor(Color.white);
                 g.drawString(vertex.getValue().getValue(), point.x + 20, point.y + 20);
-                g.drawString(vertex.getDate().toString().substring(0,10), point.x + 25, point.y + 40);
+                g.drawString(vertex.getDate().toString().substring(0,10), point.x + 20, point.y + 40);
+                g.drawString("Dur: "+vertex.getDuration()+" Days", point.x + 20, point.y + 53);
+
             }
         });
     }
@@ -393,6 +404,7 @@ public class DeliverableForum extends JPanel {
         dateLabel = new JLabel("Starting date: ");
         datePane = new JPanel();
         status = new JLabel("");
+        budgetLabel = new JLabel();
     }
 
     public void comboBoxItems(JComboBox c) {
