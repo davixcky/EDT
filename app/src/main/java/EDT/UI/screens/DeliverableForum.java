@@ -132,15 +132,20 @@ public class DeliverableForum extends JPanel {
                     }
 
                 } else if (check && dependency.equalsIgnoreCase("--")) {
-                    float dur = Float.parseFloat(durField.getText());
-                    double cost = Double.parseDouble(costField.getText());
-                    dur = durationProcessing(dur);
-                    GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
-                    status.setText("Succesfully added");
-                    start = graph.getVertex((String) deliverables.getSelectedItem());
-                    alreadyfirst = true;
+                    if (start == null) {
+                        float dur = Float.parseFloat(durField.getText());
+                        double cost = Double.parseDouble(costField.getText());
+                        dur = durationProcessing(dur);
+                        GraphNodeID id = graph.addNode(new GraphNode(tree.find((String) deliverables.getSelectedItem()), cost, dur));
+                        status.setText("Succesfully added");
+                        start = graph.getVertex((String) deliverables.getSelectedItem());
+                        alreadyfirst = true;
+                    } else {
+                        status.setText("");
+                        JOptionPane.showMessageDialog(null, "You've already added this", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "hey, you have some wrong inputs");
+                    JOptionPane.showMessageDialog(null, "Hey, you have some wrong inputs", "Error", JOptionPane.ERROR_MESSAGE);
                     status.setText("");
                 }
 
@@ -170,10 +175,10 @@ public class DeliverableForum extends JPanel {
                     }
                     System.out.println(graph.getTotalCost());
                     System.out.println(graph.getTotalDuration() + " Days");
-                } else if(start != null){
-                    JOptionPane.showMessageDialog(null, "Something is wrong with the date");
-                }else{
-                    JOptionPane.showMessageDialog(null, "Can't find an independent deliverable to start");
+                } else if (start != null) {
+                    JOptionPane.showMessageDialog(null, "Something is wrong with the date", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Can't find an independent deliverable to start", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -323,8 +328,9 @@ public class DeliverableForum extends JPanel {
             });
         }
     }
-    public void dateAssigner(GregorianCalendar c,GraphNode g){
-        if(g.getDependencies()!=null){
+
+    public void dateAssigner(GregorianCalendar c, GraphNode g) {
+        if (g.getDependencies() != null) {
             c.add(Calendar.DAY_OF_YEAR, (int) g.getDuration());
         }
     }

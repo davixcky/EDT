@@ -4,7 +4,7 @@ import EDT.UI.MainDisplay;
 
 public class App {
     public static void main(String[] args) {
-        MainDisplay mainDisplay = new MainDisplay("Project Management Office");
+        MainDisplay mainDisplay = new MainDisplay("Work Breakdown Structure OFH");
 
         mainDisplay.show();
 
