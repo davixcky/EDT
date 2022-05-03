@@ -122,4 +122,13 @@ public class Graph {
         return vertex;
     }
 
+    public void forEach(IVertexHelper helper) {
+        for (ListNode<GraphNode> graphNodeListNode : vertex) {
+            helper.doAction(graphNodeListNode.getValue());
+        }
+    }
+
+    public interface IVertexHelper {
+        void doAction(GraphNode node);
+    }
 }

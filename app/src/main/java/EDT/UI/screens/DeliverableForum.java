@@ -4,14 +4,13 @@ import EDT.services.data.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class DeliverableForum extends JPanel {
@@ -167,18 +166,11 @@ public class DeliverableForum extends JPanel {
                         throw new Exception();
                     }
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    ex.printStackTrace();
                     approved = false;
                 }
                 if (approved && start != null) {
                     status.setText("Schedule created successfully");
-//                    GraphNode test = graph.getVertex((String) deliverables.getSelectedItem());
-//                    if (test != null) {
-//                        System.out.println(test.getValue().getValue());
-//                        System.out.println("Last date " + test.getDate().toString());
-//                    }
-//                    System.out.println(graph.getTotalCost());
-//                    System.out.println(graph.getTotalDuration() + " Days");
                     graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
                         @Override
                         public void accept(ListNode<GraphNode> graphNodeListNode) {
@@ -186,11 +178,126 @@ public class DeliverableForum extends JPanel {
                             System.out.println(graphNodeListNode.getValue().getDate());
                         }
                     });
-                } else if (start == null) {
+                    openGraphVisualizer();
+                } else if (start != null) {
                     JOptionPane.showMessageDialog(null, "Something is wrong with the date", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Can't find an independent deliverable to start", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+    }
+
+    private void openGraphVisualizer() {
+        JFrame frame = new JFrame("Graph visualizer");
+        HashMap<GraphNode, Point> vertexPoints = new HashMap<>();
+
+        int []coords = { 100, 100 };
+        graph.forEach(new Graph.IVertexHelper() {
+            @Override
+            public void doAction(GraphNode node) {
+                vertexPoints.put(node, new Point(coords[0], coords[1]));
+
+                coords[0] += 100;
+
+                if (vertexPoints.size() % 5 == 0) {
+                    coords[1] += 200;
+                    coords[0] = 100;
+                }
+            }
+        });
+
+        frame.setMinimumSize(new Dimension(800, 900));
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
+
+        final boolean[] clicked = {false};
+        final GraphNode[] targetNode = {null};
+
+        frame.getRootPane().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                paintGraph(frame, vertexPoints, targetNode[0]);
+            }
+        });
+
+        frame.getRootPane().addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+                if (clicked[0]) {
+                    clicked[0] = false;
+                    if (targetNode[0] != null) {
+                        vertexPoints.put(targetNode[0], new Point(e.getPoint()));
+                        paintGraph(frame, vertexPoints, targetNode[0]);
+                    }
+
+                    targetNode[0] = null;
+                    return;
+                }
+
+                vertexPoints.forEach(new BiConsumer<GraphNode, Point>() {
+                    @Override
+                    public void accept(GraphNode node, Point point) {
+                        if (new Rectangle(40, 40, point.x, point.y).contains(e.getX(), e.getY())) {
+                            targetNode[0] = node;
+                            clicked[0] = true;
+                            paintGraph(frame, vertexPoints, targetNode[0]);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+
+        paintGraph(frame, vertexPoints, targetNode[0]);
+    }
+
+    private void paintGraph(JFrame frame, HashMap<GraphNode, Point> vertexPoints, GraphNode currentNode) {
+        Graphics2D g = (Graphics2D) frame.getGraphics();
+        g.clearRect(0, 0, frame.getWidth(), frame.getHeight());
+
+        g.setStroke(new BasicStroke(4));
+
+        vertexPoints.forEach(new BiConsumer<GraphNode, Point>() {
+            @Override
+            public void accept(GraphNode vertex, Point point) {
+
+                g.setColor(Color.white);
+                for (ListNode<GraphNode> dependency : vertex.getDependencies()) {
+                    Point dPoint = vertexPoints.get(dependency.getValue());
+
+                    g.drawString("es dependencia", point.x + 25, point.y);
+                    g.drawLine(point.x + 20, point.y + 20, dPoint.x + 20, dPoint.y + 20);
+                }
+
+                g.setColor(Color.red);
+
+                if (currentNode != null && currentNode.getValue().equals(vertex.getValue())) {
+                    g.setColor(Color.yellow);
+                }
+
+                g.fillOval(point.x, point.y, 40, 40);
+                g.setColor(Color.white);
+                g.drawString(vertex.getValue().getValue(), point.x + 20, point.y + 20);
             }
         });
     }
