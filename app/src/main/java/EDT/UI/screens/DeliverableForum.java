@@ -298,6 +298,7 @@ public class DeliverableForum extends JPanel {
                 g.fillOval(point.x, point.y, 40, 40);
                 g.setColor(Color.white);
                 g.drawString(vertex.getValue().getValue(), point.x + 20, point.y + 20);
+                g.drawString(vertex.getDate().toString().substring(0,10), point.x + 25, point.y + 40);
             }
         });
     }
@@ -436,7 +437,6 @@ public class DeliverableForum extends JPanel {
         c.setTime(date);
 
         if (start.getDependencies() != null) {
-            start.setDate(c.getTime());
             dateAssigner(c, start);
 //            start.getDependencies().forEach(new Consumer<ListNode<GraphNode>>() {
 //                @Override
@@ -445,11 +445,17 @@ public class DeliverableForum extends JPanel {
 //                    c.add(Calendar.DAY_OF_YEAR, (int) graphNodeListNode.getValue().getDuration());
 //                }
 //            });
-            c.setTime(date);
+
             graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
                 @Override
                 public void accept(ListNode<GraphNode> graphNodeListNode) {
                     commonDates(graphNodeListNode.getValue());
+                }
+            });
+            graph.getVertexList().forEach(new Consumer<ListNode<GraphNode>>() {
+                @Override
+                public void accept(ListNode<GraphNode> graphNodeListNode) {
+                    c.setTime(graphNodeListNode.getValue().getDate());
                     dateAssigner(c, graphNodeListNode.getValue());
                 }
             });
@@ -460,9 +466,11 @@ public class DeliverableForum extends JPanel {
     public void dateAssigner(GregorianCalendar c, GraphNode g) {
         if (g.getDependencies().getAt(0) != null) {
             g.setDate(c.getTime());
+            System.out.println("assigned "+c.getTime()+" to: "+g.getValue().getValue());
             c.add(Calendar.DAY_OF_YEAR, (int) g.getDuration());
             dateAssigner(c, g.getDependencies().getAt(0).getValue());
         } else {
+            System.out.println("assigned "+c.getTime()+" to: "+g.getValue().getValue());
             g.setDate(c.getTime());
         }
     }
