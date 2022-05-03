@@ -244,10 +244,11 @@ public class DeliverableForum extends JPanel {
                     clicked[0] = false;
                     if (targetNode[0] != null) {
                         vertexPoints.put(targetNode[0], new Point(e.getPoint()));
+
+                        targetNode[0] = null;
                         paintGraph(frame, vertexPoints, targetNode[0]);
                     }
 
-                    targetNode[0] = null;
                     return;
                 }
 
